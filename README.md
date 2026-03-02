@@ -325,3 +325,4 @@ Parsing: ~18pt
 Execução: ~18pt
 
 Total: ~36pt (~3 semanas com folga)
+
