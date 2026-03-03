@@ -1,22 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_functions.h                                :+:      :+:    :+:   */
+/*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/02 23:14:12 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/02 20:56:19 by vade-mel         ###   ########.fr       */
+/*   Created: 2026/03/02 20:47:16 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/03/02 21:55:57 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin_functions.h"
 
-#ifndef BUILTIN_FUNCTIONS_H
-#define  BUILTIN_FUNCTIONS_H
-
-/**
- * Libs inluded to build the Built-in functions
-*/
-# include <unistd.h>
-
-#endif
