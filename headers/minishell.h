@@ -1,22 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_functions.h                                :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/02 23:14:12 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/05 22:11:08 by vade-mel         ###   ########.fr       */
+/*   Created: 2026/03/05 22:06:27 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/03/05 22:39:15 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef BUILTIN_FUNCTIONS_H
-# define  BUILTIN_FUNCTIONS_H
-
 /**
- * Libs inluded to build the Built-in functions
-*/
+ * @brief minishell.h is the file where all the project's structs is concentred.
+ *
+ */
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+# include <stdlib.h>
 # include <unistd.h>
+
+# include "libft.h"
+# include "structs.h"
+# include "builtin_functions.h"
 
 #endif
