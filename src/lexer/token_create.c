@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 19:47:07 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/03/05 21:34:29 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/03/10 20:15:20 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ t_token *token_create(char *cmd, int type)
 	return (token);
 }
 
-int main()
+/* int main()
 {
 	t_token *t = token_create("ls", WORD);
 	printf("%s\n", t->cmd);
@@ -59,4 +59,4 @@ int main()
 
 	free(t->cmd);
 	free(t);
-}
+} */

@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 20:07:23 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/03/10 20:03:28 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/03/12 20:58:22 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,26 @@
 
 void add_token_back(t_token **head, t_token *new)
 {
-	t_token *current = *head;
+    t_token *current;
 
-	if (*head == NULL)
-	{
-		*head = new;
-		return;
-	}
-	while (current->next != NULL)
-	{
-		current= current->next;
-	}
-	if (current->next == NULL)
-	{
-		current->next = new;
-		new->prev = current;
-	}
+    if (!new)
+        return;
+
+    new->next = NULL;
+    current = *head;
+
+    if (*head == NULL)
+    {
+        new->prev = NULL;
+        *head = new;
+        return;
+    }
+
+    while (current->next != NULL)
+        current = current->next;
+
+    current->next = new;
+    new->prev = current;
 }
 // Testando funcao.
 /* void main()
