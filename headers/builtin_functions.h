@@ -19,4 +19,9 @@
 */
 # include <unistd.h>
 
+typedef struct s_mini	t_mini;
+
+void	ft_echo(t_mini *ms, char **cmd);
+void	ft_pwd(t_mini *ms, char **cmd);
+
 #endif

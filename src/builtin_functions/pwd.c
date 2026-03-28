@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 22:06:27 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/28 11:39:33 by vade-mel         ###   ########.fr       */
+/*   Created: 2026/03/28 11:45:00 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/03/28 11:37:02 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/**
- * @brief minishell.h is the file where all the project's structs is concentred.
- *
- */
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "minishell.h"
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
+void	ft_pwd(t_mini *ms, char **cmd)
+{
+	char	*cwd;
 
-# include "libft.h"
-# include "structs.h"
-# include "builtin_functions.h"
-
-#endif
+	(void)cmd;
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+	{
+		perror("pwd");
+		ms->error = 1;
+		return ;
+	}
+	ft_printf("%s\n", cwd);
+	free(cwd);
+	ms->error = 0;
+}
