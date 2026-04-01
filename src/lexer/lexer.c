@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 20:14:31 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/03/12 21:02:10 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/03/31 20:43:03 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ void free_tokens(t_token *head)
 	}
 }
 
-int main()
+/* int main()
 {
 	char *input = "ls -la | grep txt";
 
@@ -142,6 +142,6 @@ int main()
 	free_tokens(tokens);
 
 	return 0;
-}
+} */
 
 

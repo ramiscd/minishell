@@ -1,29 +1,14 @@
-typedef enum e_redir_type
-{
-	REDIR_IN,
-	REDIR_OUT,
-	APPEND,
-	HEREDOC
-}	t_redir_type;
+#ifndef PARSER_H
+# define PARSER_H
 
-typedef struct s_redir
-{
-	t_redir_type		type;
-	char				*file;
-	struct s_redir		*next;
-}	t_redir;
+# include "structs.h"
 
-typedef struct s_command
-{
-	char				**argv;
-	t_redir				*redirs;
-	struct s_command	*next;
-}	t_command;
+t_command      *parse(t_token *tokens);
+void           print_commands(t_command *cmd);
 
-typedef struct s_cmd_builder
-{
-	t_token		*current;
-	char		**args;
-	int			arg_count;
-	t_redir		*redirs;
-}	t_cmd_builder;
+/* builder */
+t_cmd_builder  *init_builder(t_token *tokens);
+void           add_arg(t_cmd_builder *b, char *arg);
+t_command      *build_command(t_cmd_builder *b); // declarar aqui
+
+#endif
