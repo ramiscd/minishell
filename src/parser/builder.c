@@ -15,11 +15,15 @@ t_cmd_builder *init_builder(t_token *tokens)
 
 void add_arg(t_cmd_builder *b, char *arg)
 {
-    // exemplo mínimo
-    b->argc++;
-    b->argv = realloc(b->argv, sizeof(char *) * (b->argc + 1));
-    b->argv[b->argc - 1] = arg;
-    b->argv[b->argc] = NULL;
+    // Se ainda não existe argv, aloca espaço inicial
+    if (!b->argv)
+        b->argv = malloc(sizeof(char *) * 2); // 1 argumento + NULL
+    else
+        b->argv = realloc(b->argv, sizeof(char *) * (b->argc + 2));
+
+    b->argv[b->argc] = arg;  // adiciona o argumento
+    b->argc++;               // incrementa count
+    b->argv[b->argc] = NULL; // termina com NULL
 }
 
 t_command *build_command(t_cmd_builder *b)

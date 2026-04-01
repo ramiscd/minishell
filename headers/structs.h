@@ -45,10 +45,11 @@ typedef struct s_command
 
 typedef struct s_cmd_builder
 {
-    t_token *tokens;   // lista completa de tokens
-    t_token *current;  // token atual que está sendo processado
-    int argc;          // quantidade de argumentos
-    char **argv;       // array de strings de argumentos
+    t_token *tokens;
+    t_token *current;
+    int argc;
+    char **argv;
+    t_redir *redirs;
 } t_cmd_builder;
 
 #endif
