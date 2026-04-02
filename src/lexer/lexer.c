@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 20:14:31 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/03/31 20:43:03 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/01 20:51:32 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,12 @@ t_token *lexer(char *input)
 		}
 		else if (input[i] == '>')
 		{
-			new_token = token_create(">", REDIR_OUT);
+			new_token = token_create(">", TOKEN_REDIR_OUT);
 			i++;
 		}
 		else if (input[i] == '<')
 		{
-			new_token = token_create("<", REDIR_IN);
+			new_token = token_create("<", TOKEN_REDIR_IN);
 			i++;
 		}
 		else // Palavra comum

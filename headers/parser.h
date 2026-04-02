@@ -12,7 +12,7 @@ t_cmd_builder	*init_builder(t_token *tokens);
 void			add_arg(t_cmd_builder *b, char *arg);
 
 /* redirecionamentos */
-t_redir *create_redir(t_token *token);
+t_redir *create_redir(t_token *op, t_token *file);
 void     add_redir(t_command *cmd, t_redir *redir);
 
 /* build command */

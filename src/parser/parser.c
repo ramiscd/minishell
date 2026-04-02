@@ -29,8 +29,7 @@ t_command *parse(t_token *tokens)
         {
             if (b->current->next)
             {
-                t_redir *r = create_redir(b->current->next);
-
+                t_redir *r = create_redir(b->current, b->current->next);
                 if (!b->redirs)
                     b->redirs = r;
                 else

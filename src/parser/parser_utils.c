@@ -3,21 +3,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-t_redir *create_redir(t_token *token)
+t_redir *create_redir(t_token *op, t_token *file)
 {
     t_redir *r = malloc(sizeof(t_redir));
     if (!r)
         return NULL;
 
-    r->file = strdup(token->cmd);
+    r->file = strdup(file->cmd);
 
-    if (token->type == TOKEN_REDIR_IN)
+    if (op->type == TOKEN_REDIR_IN)
         r->type = REDIR_IN;
-    else if (token->type == TOKEN_REDIR_OUT)
+    else if (op->type == TOKEN_REDIR_OUT)
         r->type = REDIR_OUT;
-    else if (token->type == TOKEN_HEREDOC)
+    else if (op->type == TOKEN_HEREDOC)
         r->type = HEREDOC;
-    else if (token->type == TOKEN_APPEND)
+    else if (op->type == TOKEN_APPEND)
         r->type = APPEND;
 
     r->next = NULL;

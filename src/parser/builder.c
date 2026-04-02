@@ -6,10 +6,13 @@ t_cmd_builder *init_builder(t_token *tokens)
 {
     t_cmd_builder *b = malloc(sizeof(t_cmd_builder));
     if (!b) return NULL;
+
     b->tokens = tokens;
     b->current = tokens;
     b->argc = 0;
     b->argv = NULL;
+    b->redirs = NULL;   // 🔥 FALTAVA ISSO
+
     return b;
 }
 
@@ -30,13 +33,15 @@ t_command *build_command(t_cmd_builder *b)
 {
     t_command *cmd = malloc(sizeof(t_command));
     if (!cmd) return NULL;
+
     cmd->argv = b->argv;
-    cmd->redirs = NULL;
+    cmd->redirs = b->redirs;
     cmd->next = NULL;
 
-    // reset do builder para próximo comando
+    // reset builder
     b->argc = 0;
     b->argv = NULL;
+    b->redirs = NULL;
 
     return cmd;
 }
