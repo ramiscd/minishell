@@ -1,8 +1,16 @@
-#include "../../headers/parser.h"
-#include "../../headers/structs.h"
-#include "../../headers/lexer.h"
-#include <stdio.h>
-#include <stdlib.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/07 19:46:35 by rdamasce          #+#    #+#             */
+/*   Updated: 2026/04/07 20:10:40 by rdamasce         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "parser.h"
 
 t_command *build_command(t_cmd_builder *b);
 

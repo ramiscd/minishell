@@ -1,7 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   structs.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/07 19:45:59 by rdamasce          #+#    #+#             */
+/*   Updated: 2026/04/07 20:09:35 by rdamasce         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef STRUCTS_H
 # define STRUCTS_H
 
 # include <sys/types.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 typedef enum e_token_type
 {

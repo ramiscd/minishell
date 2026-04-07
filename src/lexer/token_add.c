@@ -6,14 +6,11 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 20:07:23 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/03/12 20:58:22 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 20:10:00 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../headers/lexer.h"
-#include "../../headers/structs.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "lexer.h"
 
 void add_token_back(t_token **head, t_token *new)
 {

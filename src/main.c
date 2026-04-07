@@ -1,8 +1,17 @@
-#include "../headers/structs.h"
-#include "../headers/lexer.h"
-#include "../headers/parser.h"
-#include <stdio.h>
-#include <stdlib.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/07 19:46:41 by rdamasce          #+#    #+#             */
+/*   Updated: 2026/04/07 20:16:12 by rdamasce         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "lexer.h"
+#include "parser.h"
 
 int	main(int ac, char **av)
 {

@@ -6,35 +6,11 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 20:14:31 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/01 20:51:32 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 20:15:23 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../headers/lexer.h"
-#include "../../headers/structs.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-/* input: "ls -la | grep txt"
-
-tokens esperados:
-
-[WORD: ls]
-[WORD: -la]
-[PIPE: |]
-[WORD: grep]
-[WORD: txt] */
-
-// typedef enum e_token_type
-// {
-// 	WORD,
-// 	PIPE,
-// 	REDIR_IN,
-// 	REDIR_OUT,
-// 	HEREDOC,
-// 	APPEND,
-// } t_token_type;
+#include "lexer.h"
 
 t_token *lexer(char *input)
 {
@@ -44,14 +20,10 @@ t_token *lexer(char *input)
 
 	while (input[i])
 	{
-		// Pular espaços repetidos
 		while (input[i] == ' ')
 			i++;
-
-		if (input[i] == '\0') // Se chegamos no fim, saímos
+		if (input[i] == '\0')
 			break;
-
-		// Caracteres especiais
 		if (input[i] == '|')
 		{
 			new_token = token_create("|", PIPE);
@@ -67,13 +39,13 @@ t_token *lexer(char *input)
 			new_token = token_create("<", TOKEN_REDIR_IN);
 			i++;
 		}
-		else // Palavra comum
+		else
 		{
 			char *cmd = extract_word(input, &i);
 			new_token = token_create(cmd, WORD);
 		}
 
-		if (new_token) // Só adiciona se realmente foi criado
+		if (new_token)
 			add_token_back(&head, new_token);
 	}
 
@@ -83,13 +55,12 @@ t_token *lexer(char *input)
 char *extract_word(char *input, int *i)
 {
 	int start = *i;
-	// Avança até espaço ou caractere especial
 	while (input[*i] && input[*i] != ' ' && input[*i] != '|' &&
 		   input[*i] != '<' && input[*i] != '>')
 		(*i)++;
 
 	int len = *i - start;
-	if (len == 0) // Se não tem nada, retorna NULL
+	if (len == 0)
 		return NULL;
 
 	char *new_str = malloc(sizeof(char) * (len + 1));
@@ -101,8 +72,20 @@ char *extract_word(char *input, int *i)
 	return new_str;
 }
 
+void free_tokens(t_token *head)
+{
+	t_token *tmp;
+	while (head)
+	{
+		tmp = head;
+		head = head->next;
+		if (tmp->type == WORD && tmp->cmd)
+			free(tmp->cmd);
+		free(tmp);
+	}
+}
 
-
+// Função temporaria
 void print_tokens(t_token *head)
 {
 	t_token *current = head;
@@ -113,20 +96,6 @@ void print_tokens(t_token *head)
 		printf("Token %d: cmd='%s', type=%d\n", index, current->cmd, current->type);
 		current = current->next;
 		index++;
-	}
-}
-
-// Função para liberar memória da lista de tokens
-void free_tokens(t_token *head)
-{
-	t_token *tmp;
-	while (head)
-	{
-		tmp = head;
-		head = head->next;
-		if (tmp->type == WORD && tmp->cmd) // liberando apenas strings alocadas dinamicamente
-			free(tmp->cmd);
-		free(tmp);
 	}
 }
 

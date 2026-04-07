@@ -1,7 +1,16 @@
-#include "../../headers/structs.h"
-#include "../../headers/lexer.h"
-#include <stdlib.h>
-#include <string.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/07 19:46:31 by rdamasce          #+#    #+#             */
+/*   Updated: 2026/04/07 20:10:35 by rdamasce         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "parser.h"
 
 t_redir *create_redir(t_token *op, t_token *file)
 {

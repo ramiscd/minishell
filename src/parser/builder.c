@@ -1,6 +1,16 @@
-#include "../../headers/parser.h"
-#include <stdlib.h>
-#include <string.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builder.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/07 19:46:27 by rdamasce          #+#    #+#             */
+/*   Updated: 2026/04/07 20:15:58 by rdamasce         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "parser.h"
 
 t_cmd_builder *init_builder(t_token *tokens)
 {
@@ -18,15 +28,14 @@ t_cmd_builder *init_builder(t_token *tokens)
 
 void add_arg(t_cmd_builder *b, char *arg)
 {
-    // Se ainda não existe argv, aloca espaço inicial
     if (!b->argv)
-        b->argv = malloc(sizeof(char *) * 2); // 1 argumento + NULL
+        b->argv = malloc(sizeof(char *) * 2);
     else
         b->argv = realloc(b->argv, sizeof(char *) * (b->argc + 2));
 
-    b->argv[b->argc] = arg;  // adiciona o argumento
-    b->argc++;               // incrementa count
-    b->argv[b->argc] = NULL; // termina com NULL
+    b->argv[b->argc] = arg;
+    b->argc++;
+    b->argv[b->argc] = NULL;
 }
 
 t_command *build_command(t_cmd_builder *b)

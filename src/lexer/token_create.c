@@ -6,14 +6,11 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 19:47:07 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/03/10 20:15:20 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 20:10:10 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../headers/lexer.h"
-#include "../../headers/structs.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "lexer.h"
 
 /**
  * @brief Creates a new token for the shell.

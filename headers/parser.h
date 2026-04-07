@@ -1,4 +1,15 @@
-// parser.h
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/07 19:45:41 by rdamasce          #+#    #+#             */
+/*   Updated: 2026/04/07 19:45:56 by rdamasce         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSER_H
 # define PARSER_H
 
@@ -17,7 +28,5 @@ void     add_redir(t_command *cmd, t_redir *redir);
 
 /* build command */
 t_command *build_command(t_cmd_builder *b);
-
-
 
 #endif
