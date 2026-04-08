@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 19:46:31 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 21:31:39 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 21:45:35 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 t_redir	*create_redir(t_token *op, t_token *file)
 {
-	t_redir *r = malloc(sizeof(t_redir));
+	t_redir	*r;
 
+	r = malloc(sizeof(t_redir));
 	if (!r)
 		return (NULL);
 	r->file = strdup(file->cmd);

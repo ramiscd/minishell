@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 19:47:07 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 21:29:41 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 21:47:43 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,6 @@
 /**
  * @brief Creates a new token for the shell.
  *
- * Allocates memory for a t_token struct, initializes its fields with
- * the given command string and token type, and sets the next and prev
- * pointers to NULL.
- *
- * @param cmd The command string or value of the token.
- * @param type The type of the token, defined by the t_token_type enum (e.g., WORD, PIPE, REDIR_IN).
- * @return A pointer to the newly created t_token struct, or NULL if memory allocation fails.
- *
- * @note The caller is responsible for freeing the memory allocated for
- * both the token and the cmd string if dynamically allocated.
  *
  * @code
  * // Example usage:
@@ -37,8 +27,9 @@
  */
 t_token	*token_create(char *cmd, int type)
 {
-	t_token	*token = malloc(sizeof(t_token));
+	t_token	*token;
 
+	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->cmd = cmd;
