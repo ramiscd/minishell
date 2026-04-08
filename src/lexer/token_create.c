@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 19:47:07 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 21:47:43 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 22:02:53 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_token	*token_create(char *cmd, int type)
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->cmd = cmd;
+	token->cmd = strdup(cmd);
 	token->type = type;
 	token->prev = NULL;
 	token->next = NULL;
