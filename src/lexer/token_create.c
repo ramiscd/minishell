@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 19:47:07 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 20:10:10 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 21:29:41 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,16 @@
  * ls 0   // assuming WORD = 0 in t_token_type enum
  * @endcode
  */
-t_token *token_create(char *cmd, int type)
+t_token	*token_create(char *cmd, int type)
 {
-	t_token *token = malloc(sizeof(t_token));
+	t_token	*token = malloc(sizeof(t_token));
+
 	if (!token)
-		return NULL;
+		return (NULL);
 	token->cmd = cmd;
 	token->type = type;
 	token->prev = NULL;
 	token->next = NULL;
-
 	return (token);
 }
 

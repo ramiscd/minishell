@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 19:45:59 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 20:09:35 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 21:26:13 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 # define STRUCTS_H
 
 # include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
 
 typedef enum e_token_type
 {
@@ -26,7 +26,7 @@ typedef enum e_token_type
 	TOKEN_REDIR_OUT,
 	TOKEN_HEREDOC,
 	TOKEN_APPEND,
-} t_token_type;
+}	t_token_type;
 
 typedef enum e_redir_type
 {
@@ -60,11 +60,11 @@ typedef struct s_command
 
 typedef struct s_cmd_builder
 {
-    t_token *tokens;
-    t_token *current;
-    int argc;
-    char **argv;
-    t_redir *redirs;
-} t_cmd_builder;
+	t_token		*tokens;
+	t_token		*current;
+	int			argc;
+	char		**argv;
+	t_redir		*redirs;
+}	t_cmd_builder;
 
 #endif

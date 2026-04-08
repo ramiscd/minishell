@@ -6,13 +6,13 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/10 20:14:31 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 20:15:23 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/07 21:35:48 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
-t_token *lexer(char *input)
+t_token	*lexer(char *input)
 {
 	t_token *head = NULL;
 	t_token *new_token;
@@ -23,7 +23,7 @@ t_token *lexer(char *input)
 		while (input[i] == ' ')
 			i++;
 		if (input[i] == '\0')
-			break;
+			break ;
 		if (input[i] == '|')
 		{
 			new_token = token_create("|", PIPE);
@@ -44,37 +44,34 @@ t_token *lexer(char *input)
 			char *cmd = extract_word(input, &i);
 			new_token = token_create(cmd, WORD);
 		}
-
 		if (new_token)
 			add_token_back(&head, new_token);
 	}
-
-	return head;
+	return (head);
 }
 
-char *extract_word(char *input, int *i)
+char	*extract_word(char *input, int *i)
 {
 	int start = *i;
-	while (input[*i] && input[*i] != ' ' && input[*i] != '|' &&
-		   input[*i] != '<' && input[*i] != '>')
+	while (
+		input[*i] && input[*i] != ' ' && input[*i] != '|' &&
+		input[*i] != '<' && input[*i] != '>')
 		(*i)++;
-
 	int len = *i - start;
 	if (len == 0)
-		return NULL;
-
+		return (NULL);
 	char *new_str = malloc(sizeof(char) * (len + 1));
 	if (!new_str)
-		return NULL;
-
+		return (NULL);
 	strncpy(new_str, input + start, len);
 	new_str[len] = '\0';
-	return new_str;
+	return (new_str);
 }
 
-void free_tokens(t_token *head)
+void	free_tokens(t_token *head)
 {
-	t_token *tmp;
+	t_token	*tmp;
+
 	while (head)
 	{
 		tmp = head;
@@ -86,7 +83,7 @@ void free_tokens(t_token *head)
 }
 
 // Função temporaria
-void print_tokens(t_token *head)
+void	print_tokens(t_token *head)
 {
 	t_token *current = head;
 	int index = 0;
@@ -112,5 +109,3 @@ void print_tokens(t_token *head)
 
 	return 0;
 } */
-
-
