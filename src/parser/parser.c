@@ -14,6 +14,29 @@
 
 t_command	*build_command(t_cmd_builder *b);
 
+void	free_command(t_command *cmd)
+{
+	t_command *tmp;
+	int i;
+
+	while (cmd)
+	{
+		tmp = cmd;
+		cmd = cmd->next;
+
+		if (tmp->argv)
+		{
+			i = 0;
+			while (tmp->argv[i])
+				free(tmp->argv[i++]);
+			free(tmp->argv);
+		}
+
+		free_redirs(tmp->redirs);
+		free(tmp);
+	}
+}
+
 static void	add_to_list(t_command *cmd, t_command **head, t_command **last)
 {
 	if (!cmd)
@@ -46,7 +69,7 @@ static int	handle_redirection(t_cmd_builder *b)
 	return (1);
 }
 
-static int	process_pipe(t_cmd_builder **b, t_command **head, t_command **last)
+/* static int	process_pipe(t_cmd_builder **b, t_command **head, t_command **last)
 {
 	if ((*b)->argc == 0 && (*b)->redirs == NULL)
 		return (printf("Syntax error near pipe\n"), 0);
@@ -55,36 +78,58 @@ static int	process_pipe(t_cmd_builder **b, t_command **head, t_command **last)
 		return (printf("Syntax error near pipe\n"), 0);
 	*b = init_builder((*b)->current->next);
 	return (1);
-}
+} */
 
-t_command	*parse(t_token *tokens)
+t_command *parse(t_token *tokens)
 {
-	t_cmd_builder	*b;
-	t_command		*head;
-	t_command		*last;
+    t_cmd_builder *b;
+    t_command *head;
+    t_command *last;
+    t_command *cmd;
 
-	b = init_builder(tokens);
-	head = NULL;
-	last = NULL;
-	if (tokens && tokens->type == PIPE)
-		return (printf("Syntax error near pipe\n"), NULL);
-	while (b && b->current)
-	{
-		if (b->current->type == WORD)
-		{
-			add_arg(b, b->current->cmd);
-			b->current = b->current->next;
-		}
-		else if (b->current->type >= TOKEN_REDIR_IN
-			&& b->current->type <= TOKEN_APPEND && !handle_redirection(b))
-			return (NULL);
-		else if (b->current->type == PIPE && !process_pipe(&b, &head, &last))
-			return (NULL);
-		else if (b->current->type != PIPE)
-			b->current = b->current->next;
-	}
-	add_to_list(build_command(b), &head, &last);
-	return (head);
+    b = init_builder(tokens);
+    head = NULL;
+    last = NULL;
+
+    if (tokens && tokens->type == PIPE)
+        return (printf("Syntax error near pipe\n"), NULL);
+
+    while (b && b->current)
+    {
+        if (b->current->type == WORD)
+        {
+            add_arg(b, strdup(b->current->cmd));
+            b->current = b->current->next;
+        }
+        else if (b->current->type >= TOKEN_REDIR_IN
+            && b->current->type <= TOKEN_APPEND)
+        {
+            if (!handle_redirection(b))
+                return (free_builder(b), free_command(head), NULL);
+        }
+        else if (b->current->type == PIPE)
+        {
+            if (b->argc == 0 && b->redirs == NULL)
+                return (free_builder(b), free_command(head),
+                    printf("Syntax error near pipe\n"), NULL);
+
+            cmd = build_command(b);
+            add_to_list(cmd, &head, &last);
+
+            b->current = b->current->next;
+        }
+        else
+            b->current = b->current->next;
+    }
+
+    if (b->argc > 0 || b->redirs)
+    {
+        cmd = build_command(b);
+        add_to_list(cmd, &head, &last);
+    }
+
+    free_builder(b);
+    return (head);
 }
 
 void	print_commands(t_command *cmd)

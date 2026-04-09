@@ -29,4 +29,10 @@ void			add_redir(t_command *cmd, t_redir *redir);
 /* build command */
 t_command		*build_command(t_cmd_builder *b);
 
+void            free_builder(t_cmd_builder *b);
+
+void			free_redirs(t_redir *r);
+
+void			free_command(t_command *cmd);
+
 #endif

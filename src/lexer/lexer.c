@@ -12,77 +12,90 @@
 
 #include "lexer.h"
 
-static t_token	*handle_special(char c, int *i)
+static t_token *handle_special(char c, int *i)
 {
-	t_token	*new_token;
+    t_token *new_token;
 
-	new_token = NULL;
-	if (c == '|')
-	{
-		new_token = token_create("|", PIPE);
-		(*i)++;
-	}
-	else if (c == '>')
-	{
-		new_token = token_create(">", TOKEN_REDIR_OUT);
-		(*i)++;
-	}
-	else if (c == '<')
-	{
-		new_token = token_create("<", TOKEN_REDIR_IN);
-		(*i)++;
-	}
-	return (new_token);
+    new_token = NULL;
+    if (c == '|')
+    {
+        new_token = token_create("|", PIPE);
+        (*i)++;
+    }
+    else if (c == '>')
+    {
+        new_token = token_create(">", TOKEN_REDIR_OUT);
+        (*i)++;
+    }
+    else if (c == '<')
+    {
+        new_token = token_create("<", TOKEN_REDIR_IN);
+        (*i)++;
+    }
+    return (new_token);
 }
 
-t_token	*lexer(char *input)
+t_token *lexer(char *input)
 {
-	t_token	*head;
-	t_token	*new_token;
-	char	*cmd;
-	int		i;
+    t_token *head;
+    t_token *new_token;
+    char    *cmd;
+    int     i;
 
-	head = NULL;
-	i = 0;
-	while (input[i])
-	{
-		while (input[i] == ' ')
-			i++;
-		if (!input[i])
-			break ;
-		new_token = handle_special(input[i], &i);
-		if (!new_token)
-		{
-			cmd = extract_word(input, &i);
-			new_token = token_create(cmd, WORD);
-		}
-		if (new_token)
-			add_token_back(&head, new_token);
-	}
-	return (head);
+    head = NULL;
+    i = 0;
+    while (input[i])
+    {
+        while (input[i] == ' ')
+            i++;
+        if (!input[i])
+            break ;
+
+        new_token = handle_special(input[i], &i);
+        if (!new_token)
+        {
+            cmd = extract_word(input, &i);
+            if (!cmd)
+                return (free_tokens(head), NULL);
+
+            new_token = token_create(cmd, WORD);
+            free(cmd);
+            if (!new_token)
+                return (free_tokens(head), NULL);
+        }
+        else if (!new_token)
+            return (free_tokens(head), NULL);
+
+        add_token_back(&head, new_token);
+    }
+    return (head);
 }
 
-char	*extract_word(char *input, int *i)
+char *extract_word(char *input, int *i)
 {
-	int		start;
-	int		len;
-	char	*new_str;
+    int     start;
+    int     len;
+    char    *new_str;
 
-	start = *i;
-	while (input[*i] && input[*i] != ' '
-		&& input[*i] != '|'
-		&& input[*i] != '<'
-		&& input[*i] != '>')
-		(*i)++;
-	len = *i - start;
-	if (len == 0)
-		return (NULL);
-	new_str = malloc(sizeof(char) * (len + 1));
-	if (!new_str)
-		return (NULL);
-	strncpy(new_str, input + start, len);
-	new_str[len] = '\0';
-	return (new_str);
+    start = *i;
+    while (input[*i]
+        && input[*i] != ' '
+        && input[*i] != '|'
+        && input[*i] != '<'
+        && input[*i] != '>')
+        (*i)++;
+
+    len = *i - start;
+    if (len == 0)
+        return (NULL);
+
+    new_str = malloc(sizeof(char) * (len + 1));
+    if (!new_str)
+        return (NULL);
+
+    strncpy(new_str, input + start, len);
+    new_str[len] = '\0';
+    return (new_str);
 }
 
 void	free_tokens(t_token *head)
