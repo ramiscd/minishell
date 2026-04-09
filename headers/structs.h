@@ -1,25 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   structs.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/07 19:45:59 by rdamasce          #+#    #+#             */
+/*   Updated: 2026/04/07 21:26:13 by rdamasce         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef STRUCTS_H
 # define STRUCTS_H
 
 # include <sys/types.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
 
-/**
- * @struct s_token
- * @brief Represents a lexical token in the shell.
- *
- * This struct is a node of a doubly linked list created during lexical analysis.
- * Each node represents a single element of the user input, such as a command,
- * argument, pipe, or redirection operator.
- *
- * The linked list preserves the original order of the command and allows
- * traversal in both directions, which simplifies parsing and execution.
- *
- * Fields:
- * - cmd  : string value of the token (command, argument, or operator)
- * - type : token type identifier (word, pipe, redirect, etc.)
- * - next : pointer to the next token in the list
- * - prev : pointer to the previous token in the list
- */
+typedef enum e_token_type
+{
+	WORD,
+	PIPE,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_HEREDOC,
+	TOKEN_APPEND,
+}	t_token_type;
+
+typedef enum e_redir_type
+{
+	REDIR_IN,
+	REDIR_OUT,
+	APPEND,
+	HEREDOC
+}	t_redir_type;
+
 typedef struct s_token
 {
 	char			*cmd;
@@ -28,90 +44,27 @@ typedef struct s_token
 	struct s_token	*prev;
 }	t_token;
 
-
-/**
- * @struct s_mini
- * @brief Stores the global state of the minishell.
- *
- * This struct acts as the main context container for the shell. It holds the
- * current user input, prompt, environment variables, and the list of tokens
- * generated from parsing the input. It also contains flags used to control
- * shell behavior, such as error state and exit condition.
- *
- * Fields:
- * - input  : raw command line entered by the user
- * - prompt : shell prompt string displayed to the user
- * - envp   : NULL-terminated array of environment variables
- * - token  : pointer to the head of the token linked list
- * - error  : flag indicating whether an error occurred
- * - exit   : flag indicating whether the shell should terminate
- */
-typedef struct s_mini
+typedef struct s_redir
 {
-	char	*input;
-	char	*prompt;
-	char	**envp;
-	t_token	*token;
-	char	error;
-	char	exit;
-}	t_mini;
+	t_redir_type		type;
+	char				*file;
+	struct s_redir		*next;
+}	t_redir;
 
-
-/**
- * @struct s_expand
- * @brief Holds temporary state during environment variable expansion.
- *
- * This struct is used while parsing and expanding variables such as $HOME or
- * $PATH inside command strings. It stores indexes, flags, and temporary buffers
- * required to correctly extract and replace environment variables, while also
- * handling quote rules.
- *
- * Fields:
- * - hold_str : temporary storage used to build expanded strings
- * - ex       : expansion state flag
- * - start    : start index of the variable in the string
- * - end      : end index of the variable in the string
- * - quotes   : quote state indicator
- * - ex_n     : expansion counter or helper value
- * - i        : general-purpose index used during parsing
- */
-typedef struct s_expand
+typedef struct s_command
 {
-	char	**hold_str;
-	int		ex;
-	int		start;
-	int		end;
-	int		quotes;
-	int		ex_n;
-	int		i;
-}	t_expand;
+	char				**argv;
+	t_redir				*redirs;
+	struct s_command	*next;
+}	t_command;
 
-
-/**
- * @struct s_executor
- * @brief Stores execution context for running commands and pipelines.
- *
- * This struct is responsible for managing process execution, including command
- * arguments, pipe file descriptors, process IDs, and execution status. It is
- * used during the execution phase to coordinate fork(), pipe(), and execve()
- * calls when running one or multiple commands connected by pipes.
- *
- * Fields:
- * - temp  : pointer used to traverse the token list during execution
- * - cmd   : NULL-terminated array of command arguments for execve()
- * - fd    : array of pipe file descriptors
- * - status: exit status of the last executed process
- * - pid   : array of process IDs created with fork()
- * - n_pros: number of processes to execute
- */
-typedef struct s_executor
+typedef struct s_cmd_builder
 {
-	t_token	*temp;
-	char	**cmd;
-	int		**fd;
-	int		status;
-	pid_t	*pid;
-	int		n_pros;
-}	t_executor;
+	t_token		*tokens;
+	t_token		*current;
+	int			argc;
+	char		**argv;
+	t_redir		*redirs;
+}	t_cmd_builder;
 
 #endif
