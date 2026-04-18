@@ -12,18 +12,15 @@
 
 #include "minishell.h"
 
-static int	cd_invalid_args(t_shell *sh, t_command *cmd)
-{
-	char	**argv;
+int	cd_change_dir(char *path, char **oldpwd, char **newpwd);
+int	cd_update_env(t_shell *sh, char *oldpwd, char *newpwd);
 
-	argv = NULL;
-	if (cmd)
-		argv = cmd->argv;
+static int	cd_validate_args(t_shell *sh, char **argv)
+{
 	if (!argv || !argv[1] || argv[2])
 	{
 		ft_putendl_fd("cd: usage: cd <path>", 2);
-		if (sh)
-			sh->error = 1;
+		sh->error = 1;
 		return (1);
 	}
 	return (0);
@@ -32,19 +29,24 @@ static int	cd_invalid_args(t_shell *sh, t_command *cmd)
 void	ft_cd(t_shell *sh, t_command *cmd)
 {
 	char	**argv;
+	char	*oldpwd;
+	char	*newpwd;
 
+	oldpwd = NULL;
+	newpwd = NULL;
+	if (!sh)
+		return ;
 	argv = NULL;
 	if (cmd)
 		argv = cmd->argv;
-	if (!sh)
+	if (cd_validate_args(sh, argv))
 		return ;
-	if (cd_invalid_args(sh, cmd))
-		return ;
-	if (chdir(argv[1]) != 0)
+	if (cd_change_dir(argv[1], &oldpwd, &newpwd))
 	{
-		perror("cd");
 		sh->error = 1;
 		return ;
 	}
-	sh->error = 0;
+	sh->error = cd_update_env(sh, oldpwd, newpwd);
+	free(oldpwd);
+	free(newpwd);
 }
