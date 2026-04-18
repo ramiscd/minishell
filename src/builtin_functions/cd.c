@@ -12,28 +12,39 @@
 
 #include "minishell.h"
 
-static int	cd_invalid_args(t_mini *ms, char **cmd)
+static int	cd_invalid_args(t_shell *sh, t_command *cmd)
 {
-	if (!cmd || !cmd[1] || cmd[2])
+	char	**argv;
+
+	argv = NULL;
+	if (cmd)
+		argv = cmd->argv;
+	if (!argv || !argv[1] || argv[2])
 	{
 		ft_putendl_fd("cd: usage: cd <path>", 2);
-		ms->error = 1;
+		if (sh)
+			sh->error = 1;
 		return (1);
 	}
 	return (0);
 }
 
-void	ft_cd(t_mini *ms, char **cmd)
+void	ft_cd(t_shell *sh, t_command *cmd)
 {
-	if (!ms)
+	char	**argv;
+
+	argv = NULL;
+	if (cmd)
+		argv = cmd->argv;
+	if (!sh)
 		return ;
-	if (cd_invalid_args(ms, cmd))
+	if (cd_invalid_args(sh, cmd))
 		return ;
-	if (chdir(cmd[1]) != 0)
+	if (chdir(argv[1]) != 0)
 	{
 		perror("cd");
-		ms->error = 1;
+		sh->error = 1;
 		return ;
 	}
-	ms->error = 0;
+	sh->error = 0;
 }

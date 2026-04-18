@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	ft_pwd(t_mini *ms, char **cmd)
+void	ft_pwd(t_shell *sh, t_command *cmd)
 {
 	char	*cwd;
 
@@ -21,10 +21,12 @@ void	ft_pwd(t_mini *ms, char **cmd)
 	if (!cwd)
 	{
 		perror("pwd");
-		ms->error = 1;
+		if (sh)
+			sh->error = 1;
 		return ;
 	}
 	ft_printf("%s\n", cwd);
 	free(cwd);
-	ms->error = 0;
+	if (sh)
+		sh->error = 0;
 }

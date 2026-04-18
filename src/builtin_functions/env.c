@@ -12,22 +12,22 @@
 
 #include "minishell.h"
 
-void	ft_env(t_mini *ms, char **cmd)
+void	ft_env(t_shell *sh, t_command *cmd)
 {
 	int	i;
 
 	(void)cmd;
-	if (!ms || !ms->envp)
+	if (!sh || !sh->envp)
 	{
-		if (ms)
-			ms->error = 0;
+		if (sh)
+			sh->error = 0;
 		return ;
 	}
 	i = 0;
-	while (ms->envp[i])
+	while (sh->envp[i])
 	{
-		ft_printf("%s\n", ms->envp[i]);
+		ft_printf("%s\n", sh->envp[i]);
 		i++;
 	}
-	ms->error = 0;
+	sh->error = 0;
 }

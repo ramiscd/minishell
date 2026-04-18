@@ -6,7 +6,7 @@
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 11:38:50 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/28 11:38:53 by vade-mel         ###   ########.fr       */
+/*   Updated: 2026/04/18 14:21:12 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,10 @@ typedef struct s_token
 	struct s_token	*prev;
 }	t_token;
 
+typedef struct s_command
+{
+	char	**argv;
+}	t_command;
 
 /**
  * @struct s_mini
@@ -68,6 +72,7 @@ typedef struct s_mini
 	char	exit;
 }	t_mini;
 
+typedef t_mini	t_shell;
 
 /**
  * @struct s_expand
@@ -97,7 +102,6 @@ typedef struct s_expand
 	int		ex_n;
 	int		i;
 }	t_expand;
-
 
 /**
  * @struct s_executor

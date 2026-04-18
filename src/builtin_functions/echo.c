@@ -6,38 +6,60 @@
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/02 20:47:16 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/05 22:13:16 by vade-mel         ###   ########.fr       */
+/*   Updated: 2026/04/18 14:25:29 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_echo(t_mini *ms, char **cmd)
+static int	is_n_flag(char *arg)
 {
-	char	new_line;
-	int		i;
-	int		j;
+	int	j;
 
-	new_line = 1;
-	i = 1;
-	while (cmd && cmd[i] && !ft_strncmp (cmd[i], "-n", 2))
-	{
-		j = 2;
-		while (cmd[i][j] == 'n')
-			j++;
-		if (cmd[i][j] != '\0')
-			break ;
-		new_line = 0;
-		i++;
-	}
-	while (cmd && cmd[i])
-	{
-		ft_printf ("%s", cmd[i]);
-		if (cmd[++i])
-			ft_putchar_fd (' ', 1);
-	}
-	if (new_line)
-		ft_printf ("\n");
-	ms -> error = 0;
+	if (!arg || ft_strncmp(arg, "-n", 2))
+		return (0);
+	j = 2;
+	while (arg[j] == 'n')
+		j++;
+	return (arg[j] == '\0');
 }
 
+static int	get_echo_start(char **argv)
+{
+	int	i;
+
+	i = 1;
+	while (argv && argv[i] && !ft_strncmp(argv[i], "-n", 2))
+	{
+		if (!is_n_flag(argv[i]))
+			break ;
+		i++;
+	}
+	return (i);
+}
+
+static void	print_echo_args(char **argv, int i)
+{
+	while (argv && argv[i])
+	{
+		ft_printf("%s", argv[i]);
+		if (argv[++i])
+			ft_putchar_fd(' ', 1);
+	}
+}
+
+void	ft_echo(t_shell *sh, t_command *cmd)
+{
+	char	**argv;
+	int		i;
+
+	argv = NULL;
+	if (cmd)
+		argv = cmd->argv;
+	i = get_echo_start(argv);
+	print_echo_args(argv, i);
+	if (!argv || !argv[1] || !is_n_flag(argv[1]))
+		ft_printf("\n");
+	if (sh)
+		sh->error = 0;
+}
