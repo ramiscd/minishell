@@ -1,29 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   env_unset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 22:06:27 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/28 11:39:33 by vade-mel         ###   ########.fr       */
+/*   Created: 2026/04/18 15:31:00 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/04/18 15:31:00 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/**
- * @brief minishell.h is the file where all the project's structs is concentred.
- *
- */
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "minishell.h"
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
+int	env_find_key_index(char **envp, const char *key);
 
-# include "libft.h"
-# include "structs.h"
-# include "builtin_functions.h"
-# include "env.h"
+int	env_unset(t_shell *sh, const char *key)
+{
+	int	index;
 
-#endif
+	if (!sh || !sh->envp || !key || !*key)
+		return (1);
+	index = env_find_key_index(sh->envp, key);
+	if (index < 0)
+		return (0);
+	free(sh->envp[index]);
+	while (sh->envp[index])
+	{
+		sh->envp[index] = sh->envp[index + 1];
+		index++;
+	}
+	return (0);
+}
