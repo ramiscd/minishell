@@ -18,7 +18,7 @@ static int	cd_rollback_env(t_shell *sh, char *old_bkp, char *pwd_bkp)
 
 	err = 0;
 	if (old_bkp && env_set(sh, "OLDPWD", old_bkp))
-		return (1);
+		err = 1;
 	if (!old_bkp && env_unset(sh, "OLDPWD"))
 		err = 1;
 	if (pwd_bkp && env_set(sh, "PWD", pwd_bkp))
