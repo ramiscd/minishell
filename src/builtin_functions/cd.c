@@ -1,20 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
+/*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/27 20:54:49 by apuchill          #+#    #+#             */
-/*   Updated: 2026/03/28 14:47:47 by vade-mel         ###   ########.fr       */
+/*   Created: 2026/03/28 12:30:00 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/03/28 12:30:00 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-void	ft_putendl_fd(char *s, int fd)
+static int	cd_invalid_args(t_mini *ms, char **cmd)
 {
-	if (s)
-		write(fd, s, ft_strlen(s));
-	write(fd, "\n", 1);
+	if (!cmd || !cmd[1] || cmd[2])
+	{
+		ft_putendl_fd("cd: usage: cd <path>", 2);
+		ms->error = 1;
+		return (1);
+	}
+	return (0);
+}
+
+void	ft_cd(t_mini *ms, char **cmd)
+{
+	if (!ms)
+		return ;
+	if (cd_invalid_args(ms, cmd))
+		return ;
+	if (chdir(cmd[1]) != 0)
+	{
+		perror("cd");
+		ms->error = 1;
+		return ;
+	}
+	ms->error = 0;
 }
