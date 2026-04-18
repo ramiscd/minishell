@@ -35,8 +35,14 @@ int	run_builtin_dispatch(t_shell *sh, t_command *cmd)
 		ft_cd(sh, cmd);
 	else if (builtin_match(name, "pwd"))
 		ft_pwd(sh, cmd);
+	else if (builtin_match(name, "export"))
+		ft_export(sh, cmd);
+	else if (builtin_match(name, "unset"))
+		ft_unset(sh, cmd);
 	else if (builtin_match(name, "env"))
 		ft_env(sh, cmd);
+	else if (builtin_match(name, "exit"))
+		ft_exit(sh, cmd);
 	else
 		sh->error = 0;
 	return (1);
