@@ -1,31 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 22:06:27 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/28 11:39:33 by vade-mel         ###   ########.fr       */
+/*   Created: 2026/04/19 11:20:00 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/04/19 11:20:00 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/**
- * @brief minishell.h is the file where all the project's structs is concentred.
- *
- */
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef EXECUTOR_H
+# define EXECUTOR_H
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
+typedef struct s_mini		t_shell;
+typedef struct s_command	t_command;
 
-# include "libft.h"
-# include "structs.h"
-# include "builtin_functions.h"
-# include "env.h"
-# include "redirections.h"
-# include "executor.h"
+int	execute_command(t_shell *sh, t_command *cmd);
 
 #endif

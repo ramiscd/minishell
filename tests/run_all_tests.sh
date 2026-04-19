@@ -27,17 +27,23 @@ status=0
 
 if [ "$#" -eq 0 ]
 then
-	run_suite "redirections" "./tests/integration/run_redirections_tests.sh" \
+	run_suite "redirections" "sh ./tests/integration/run_redirections_tests.sh" \
+		|| status=1
+	run_suite "executor" "sh ./tests/integration/run_executor_tests.sh" \
 		|| status=1
 elif [ "$#" -eq 1 ]
 then
 	if [ "$1" = "redirections" ]
 	then
 		run_suite "redirections" \
-			"./tests/integration/run_redirections_tests.sh" || status=1
+			"sh ./tests/integration/run_redirections_tests.sh" || status=1
+	elif [ "$1" = "executor" ]
+	then
+		run_suite "executor" \
+			"sh ./tests/integration/run_executor_tests.sh" || status=1
 	else
 		echo "Unknown test suite: $1"
-		echo "Available: redirections"
+		echo "Available: redirections executor"
 		exit 1
 	fi
 else
