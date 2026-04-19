@@ -1,30 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   redirections.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 22:06:27 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/03/28 11:39:33 by vade-mel         ###   ########.fr       */
+/*   Created: 2026/04/18 18:02:00 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/04/18 18:02:00 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/**
- * @brief minishell.h is the file where all the project's structs is concentred.
- *
- */
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef REDIRECTIONS_H
+# define REDIRECTIONS_H
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
+typedef struct s_command	t_command;
+typedef struct s_redir		t_redir;
 
-# include "libft.h"
-# include "structs.h"
-# include "builtin_functions.h"
-# include "env.h"
-# include "redirections.h"
+# define REDIR_IN 1
+# define REDIR_OUT 2
+# define REDIR_APPEND 3
+
+int		apply_redirs(t_command *cmd, int *saved_stdin, int *saved_stdout);
+void	restore_stdio(int saved_stdin, int saved_stdout);
 
 #endif

@@ -40,9 +40,17 @@ typedef struct s_token
 	struct s_token	*prev;
 }	t_token;
 
+typedef struct s_redir
+{
+	int				type;
+	char			*file;
+	struct s_redir	*next;
+}	t_redir;
+
 typedef struct s_command
 {
 	char	**argv;
+	t_redir	*redirs;
 }	t_command;
 
 /**
