@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 #include <sys/wait.h>
+#include <signal.h>
 
 static int	count_cmds(t_command *cmds)
 {
@@ -48,6 +49,8 @@ static void	run_child(t_shell *sh, t_command *cmd, int *pipe_fds, int i, int n)
 		dup2(pipe_fds[(i - 1) * 2], STDIN_FILENO);
 	if (i < n - 1)
 		dup2(pipe_fds[i * 2 + 1], STDOUT_FILENO);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 	close_all_pipes(pipe_fds, n);
 	apply_redirs(cmd, &saved_stdin, &saved_stdout);
 	if (is_builtin(cmd))

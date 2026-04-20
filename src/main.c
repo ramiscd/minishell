@@ -16,6 +16,22 @@
 #include "executor.h"
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <signal.h>
+
+static void	sigint_handler(int sig)
+{
+	(void)sig;
+	write(STDERR_FILENO, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
+
+static void	setup_signals(void)
+{
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, sigint_handler);
+}
 
 static char	**copy_envp(char **envp)
 {
@@ -66,6 +82,7 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	init_shell(&sh, envp);
 	rl_outstream = stderr;
+	setup_signals();
 	while (!sh.exit)
 	{
 		sh.input = readline(sh.prompt);

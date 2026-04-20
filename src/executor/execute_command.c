@@ -13,6 +13,7 @@
 #include "minishell.h"
 #include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 
 char	*resolve_path(t_shell *sh, char *cmd)
 {
@@ -111,6 +112,8 @@ static int	execute_external(t_shell *sh, t_command *cmd, int saved_stdin,
 	}
 	if (pid == 0)
 	{
+		signal(SIGQUIT, SIG_DFL);
+		signal(SIGINT, SIG_DFL);
 		execve(path, cmd->argv, sh->envp);
 		perror(path);
 		free(path);
