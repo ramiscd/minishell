@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 19:45:59 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 21:26:13 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/20 00:00:00 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,37 @@ typedef struct s_command
 	t_redir				*redirs;
 	struct s_command	*next;
 }	t_command;
+
+typedef struct s_mini
+{
+	char	*input;
+	char	*prompt;
+	char	**envp;
+	t_token	*token;
+	char	error;
+	char	exit;
+}	t_mini;
+
+typedef struct s_expand
+{
+	char	**hold_str;
+	int		ex;
+	int		start;
+	int		end;
+	int		quotes;
+	int		ex_n;
+	int		i;
+}	t_expand;
+
+typedef struct s_executor
+{
+	t_token	*temp;
+	char	**cmd;
+	int		**fd;
+	int		status;
+	pid_t	*pid;
+	int		n_pros;
+}	t_executor;
 
 typedef struct s_cmd_builder
 {

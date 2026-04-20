@@ -1,0 +1,7 @@
+# Personal files used during development
+drafts_structs_minishell
+.vscode
+# tests/
+subject/
+*.a
+*.o

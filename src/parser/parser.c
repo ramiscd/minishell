@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 21:55:38 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/07 21:55:41 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/20 20:32:46 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,54 +82,54 @@ static int	handle_redirection(t_cmd_builder *b)
 
 t_command *parse(t_token *tokens)
 {
-    t_cmd_builder *b;
-    t_command *head;
-    t_command *last;
-    t_command *cmd;
+	t_cmd_builder *b;
+	t_command *head;
+	t_command *last;
+	t_command *cmd;
 
-    b = init_builder(tokens);
-    head = NULL;
-    last = NULL;
+	b = init_builder(tokens);
+	head = NULL;
+	last = NULL;
 
-    if (tokens && tokens->type == PIPE)
-        return (printf("Syntax error near pipe\n"), NULL);
+	if (tokens && tokens->type == PIPE)
+		return (printf("Syntax error near pipe\n"), NULL);
 
-    while (b && b->current)
-    {
-        if (b->current->type == WORD)
-        {
-            add_arg(b, strdup(b->current->cmd));
-            b->current = b->current->next;
-        }
-        else if (b->current->type >= TOKEN_REDIR_IN
-            && b->current->type <= TOKEN_APPEND)
-        {
-            if (!handle_redirection(b))
-                return (free_builder(b), free_command(head), NULL);
-        }
-        else if (b->current->type == PIPE)
-        {
-            if (b->argc == 0 && b->redirs == NULL)
-                return (free_builder(b), free_command(head),
-                    printf("Syntax error near pipe\n"), NULL);
+	while (b && b->current)
+	{
+		if (b->current->type == WORD)
+		{
+			add_arg(b, strdup(b->current->cmd));
+			b->current = b->current->next;
+		}
+		else if (b->current->type >= TOKEN_REDIR_IN
+			&& b->current->type <= TOKEN_APPEND)
+		{
+			if (!handle_redirection(b))
+				return (free_builder(b), free_command(head), NULL);
+		}
+		else if (b->current->type == PIPE)
+		{
+			if (b->argc == 0 && b->redirs == NULL)
+				return (free_builder(b), free_command(head),
+					printf("Syntax error near pipe\n"), NULL);
 
-            cmd = build_command(b);
-            add_to_list(cmd, &head, &last);
+			cmd = build_command(b);
+			add_to_list(cmd, &head, &last);
 
-            b->current = b->current->next;
-        }
-        else
-            b->current = b->current->next;
-    }
+			b->current = b->current->next;
+		}
+		else
+			b->current = b->current->next;
+	}
 
-    if (b->argc > 0 || b->redirs)
-    {
-        cmd = build_command(b);
-        add_to_list(cmd, &head, &last);
-    }
+	if (b->argc > 0 || b->redirs)
+	{
+		cmd = build_command(b);
+		add_to_list(cmd, &head, &last);
+	}
 
-    free_builder(b);
-    return (head);
+	free_builder(b);
+	return (head);
 }
 
 void	print_commands(t_command *cmd)
