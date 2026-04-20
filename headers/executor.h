@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 11:20:00 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/04/19 11:20:00 by vade-mel         ###   ########.fr       */
+/*   Updated: 2026/04/20 19:52:23 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 typedef struct s_mini		t_shell;
 typedef struct s_command	t_command;
 
-int	execute_command(t_shell *sh, t_command *cmd);
+char	*resolve_path(t_shell *sh, char *cmd);
+int		execute_command(t_shell *sh, t_command *cmd);
+void	execute_pipeline(t_shell *sh, t_command *head);
 
 #endif

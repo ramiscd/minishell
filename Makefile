@@ -27,6 +27,7 @@ SRC = \
 	src/parser/parser_utils.c \
 	src/parser/builder.c \
 	src/executor/execute_command.c \
+	src/executor/pipeline.c \
 	src/builtin_functions/builtins.c \
 	src/builtin_functions/builtins_utils.c \
 	src/builtin_functions/cd.c \

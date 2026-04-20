@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 19:46:41 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/20 00:00:00 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/20 19:52:14 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,43 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+static char	**copy_envp(char **envp)
+{
+	int		count;
+	char	**copy;
+	int		i;
+
+	count = 0;
+	while (envp && envp[count])
+		count++;
+	copy = malloc(sizeof(char *) * (count + 1));
+	if (!copy)
+		return (NULL);
+	i = 0;
+	while (i < count)
+	{
+		copy[i] = strdup(envp[i]);
+		if (!copy[i])
+		{
+			while (i-- > 0)
+				free(copy[i]);
+			free(copy);
+			return (NULL);
+		}
+		i++;
+	}
+	copy[count] = NULL;
+	return (copy);
+}
+
 static void	init_shell(t_shell *sh, char **envp)
 {
 	sh->input = NULL;
 	sh->prompt = "minishell$ ";
-	sh->envp = envp;
+	sh->envp = copy_envp(envp);
 	sh->token = NULL;
 	sh->error = 0;
 	sh->exit = 0;
-}
-
-static void	run_commands(t_shell *sh, t_command *cmds)
-{
-	t_command	*cmd;
-
-	cmd = cmds;
-	while (cmd && !sh->exit)
-	{
-		execute_command(sh, cmd);
-		cmd = cmd->next;
-	}
 }
 
 int	main(int ac, char **av, char **envp)
@@ -48,6 +65,7 @@ int	main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	init_shell(&sh, envp);
+	rl_outstream = stderr;
 	while (!sh.exit)
 	{
 		sh.input = readline(sh.prompt);
@@ -59,7 +77,7 @@ int	main(int ac, char **av, char **envp)
 			continue ;
 		}
 		add_history(sh.input);
-		tokens = lexer(sh.input);
+		tokens = lexer(sh.input, &sh);
 		if (!tokens)
 		{
 			free(sh.input);
@@ -69,10 +87,10 @@ int	main(int ac, char **av, char **envp)
 		free_tokens(tokens);
 		if (cmds)
 		{
-			run_commands(&sh, cmds);
+			execute_pipeline(&sh, cmds);
 			free_command(cmds);
 		}
 		free(sh.input);
 	}
-	return (sh.error);
+	return ((unsigned char)sh.error);
 }

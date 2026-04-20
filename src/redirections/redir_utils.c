@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   redir_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 18:04:00 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/04/18 18:04:00 by vade-mel         ###   ########.fr       */
+/*   Updated: 2026/04/20 19:51:57 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <fcntl.h>
 
-static int	redir_target_fd(int type)
+static int	redir_target_fd(t_redir_type type)
 {
 	if (type == REDIR_IN)
 		return (STDIN_FILENO);
@@ -28,7 +28,7 @@ static int	redir_open_fd(t_redir *redir)
 		return (open(redir->file, O_RDONLY));
 	if (redir->type == REDIR_OUT)
 		return (open(redir->file, O_CREAT | O_WRONLY | O_TRUNC, 0644));
-	if (redir->type == REDIR_APPEND)
+	if (redir->type == APPEND)
 		return (open(redir->file, O_CREAT | O_WRONLY | O_APPEND, 0644));
 	return (-1);
 }

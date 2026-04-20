@@ -1,7 +1,7 @@
 # Personal files used during development
 drafts_structs_minishell
 .vscode
-tests/
+# tests/
 subject/
 *.a
 *.o

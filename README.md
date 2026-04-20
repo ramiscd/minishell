@@ -1,328 +1,89 @@
-# minishell
-Implementação de um shell simplificado em C, inspirado no bash, capaz de interpretar e executar comandos, incluindo parsing, execução de processos, redirecionamentos, pipes e built-ins. O projeto segue os requisitos da 42 e foca em arquitetura modular, separando parsing e execução para maior clareza e manutenção.
+*This project was created as part of the curriculum at 42 by rdamasce, vade-mel.*
 
-Sim. O mínimo necessário para duas pessoas trabalharem em paralelo no minishell é definir o “contrato” entre parsing e execução. Isso consiste principalmente nas structs e nas interfaces.
+## Description
 
-Pense nisso como uma API interna. O parsing produz dados. A execução consome esses dados. Ambos precisam concordar exatamente no formato.
+Minishell is a simplified Unix shell implemented in C, inspired by Bash. The project recreates the core behavior of an interactive shell: reading user input, parsing it into commands, and executing those commands — including support for pipelines, redirections, environment variable expansion, and built-in commands.
 
-**1. Struct principal do comando**
+The implementation is split between two modules with a clean internal contract:
 
-Essa struct é o coração da integração:
+- **Parsing** (rdamasce): tokenizer, quote handling, `$VAR`/`$?` expansion, pipeline and redirection parsing, command builder.
+- **Execution** (vade-mel): process forking, PATH resolution, pipeline plumbing via `pipe()`/`dup2()`, redirections (`<`, `>`, `>>`), and all built-in commands (`echo`, `cd`, `pwd`, `env`, `export`, `unset`, `exit`).
 
-```c
-typedef enum e_redir_type
-{
-    REDIR_IN,      // <
-    REDIR_OUT,     // >
-    REDIR_APPEND,  // >>
-    REDIR_HEREDOC  // <<
-} t_redir_type;
+Both modules share a common set of structs defined in `headers/structs.h`, which acts as the interface contract between parsing and execution.
 
-typedef struct s_redir
-{
-    t_redir_type type;
-    char *file;
-    struct s_redir *next;
-} t_redir;
+## Instructions
 
-typedef struct s_command
-{
-    char **argv;            // ["ls", "-la", NULL]
-    t_redir *redirs;        // lista de redirecionamentos
-    struct s_command *next; // próximo comando no pipeline
-} t_command;
+### Requirements
+
+- GCC or Clang with `-Wall -Wextra -Werror`
+- GNU Readline (`libreadline-dev` on Debian/Ubuntu)
+
+```bash
+sudo apt-get install libreadline-dev
 ```
 
-Exemplo para:
+### Compilation
 
-```
-cat file.txt | grep hello > out.txt
-```
-
-Fica:
-
-```
-[cat file.txt] -> [grep hello > out.txt]
+```bash
+make
 ```
 
----
+This builds `libft` and then the `minishell` binary at the project root.
 
-**2. Definir responsabilidade de cada lado**
-
-Parsing (Pessoa A):
-
-Entrada:
-
-```
-char *input;
+```bash
+make re      # full rebuild
+make clean   # remove object files
+make fclean  # remove objects and binary
 ```
 
-Saída:
+### Running
 
-```
-t_command *parse(char *input);
-```
-
-Execução (Pessoa B):
-
-Entrada:
-
-```
-t_command *cmd;
+```bash
+./minishell
 ```
 
-Execução:
+The shell displays a `minishell$ ` prompt. Type commands and press Enter. Exit with `exit` or Ctrl+D.
 
-```
-void execute(t_command *cmd);
-```
+### Supported features
 
-Esse é o contrato principal.
+| Feature | Examples |
+|---|---|
+| Absolute and relative paths | `/bin/ls`, `./script.sh` |
+| PATH-based lookup | `ls`, `grep`, `wc` |
+| Pipelines | `ls \| grep .c \| wc -l` |
+| Input/output redirections | `cat < file`, `ls > out`, `echo hi >> log` |
+| Single quotes (no expansion) | `echo '$USER'` → `$USER` |
+| Double quotes (expansion) | `echo "$USER"` → `rdamasce` |
+| Variable expansion | `echo $HOME`, `echo $?` |
+| Built-ins | `echo`, `cd`, `pwd`, `env`, `export`, `unset`, `exit` |
 
----
+### Running the test suite
 
-**3. Struct de contexto global (muito recomendado)**
-
-```c
-typedef struct s_shell
-{
-    char **envp;
-    int last_exit_code;
-} t_shell;
-```
-
-Ambos os módulos usarão isso.
-
----
-
-**4. Arquivos mínimos para começar**
-
-Parsing:
-
-```
-parsing/
-  tokenizer.c
-  parser.c
-  parser_utils.c
-  parsing.h
+```bash
+bash tests/regua_test.sh
 ```
 
-Execução:
+The suite covers all mandatory items from the 42 evaluation rubric and reports PASS / FAIL / SKIP for each case.
 
-```
-execution/
-  execute.c
-  exec_utils.c
-  redirections.c
-  pipes.c
-  execution.h
-```
+## Resources
 
-Shared:
+The following references were used during development, organized by area:
 
-```
-include/
-  minishell.h
-```
+### Shell behavior and POSIX specification
 
----
+- [GNU Bash Reference Manual](https://www.gnu.org/software/bash/manual/bash.html) — authoritative reference for quoting rules, parameter expansion, redirections, and pipeline semantics. Used throughout parsing and execution design.
+- [POSIX Shell Command Language](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html) — formal specification for shell grammar and operator precedence. Used to validate edge cases in the parser.
 
-**5. minishell.h (arquivo mais importante no início)**
+### Readline
 
-Ele define o contrato entre os dois:
+- [GNU Readline Library](https://tiswww.case.edu/php/chet/readline/rltop.html) — documentation for `readline()`, `add_history()`, and `rl_outstream`. Used to implement the interactive prompt and command history.
 
-```c
-typedef struct s_command t_command;
+### System calls
 
-t_command *parse(char *input);
-void execute(t_command *cmd);
-void free_commands(t_command *cmd);
-```
+- `man 2 execve`, `man 2 fork`, `man 2 pipe`, `man 2 dup2`, `man 2 waitpid` — primary references for the execution layer and pipeline plumbing.
+- `man 2 open`, `man 2 close` — used for redirection implementation.
+- `man 3 getcwd`, `man 2 chdir` — used for the `cd` and `pwd` built-ins.
 
----
+### Memory and debugging
 
-**6. Ordem prática recomendada (passo a passo)**
-
-Passo 1
-Criar as structs
-
-Passo 2
-Criar um parser fake que retorna algo fixo
-
-Passo 3
-Criar executor que executa esse algo fixo com execve
-
-Passo 4
-Depois evoluir parsing e execução independentemente
-
-
-# Divisão estrutura do projeto
-
-
-A melhor forma de dividir é seguir o fluxo real do shell:
-
-input → tokenizer → parser → estrutura → executor → processos
-
-Vou separar em tarefas pequenas, com granularidade adequada e dependências claras. As estimativas consideram que vocês já têm experiência.
-
----
-
-# Fase 1 — Fundação (bloqueia todo o resto)
-
-Definir structs compartilhadas (t_command, t_redir, t_shell) - Parsing - 2pt
-Criar arquivo include/minishell.h com structs e interfaces - Parsing - 1pt
-Criar estrutura de pastas do projeto (parsing, execution, include, utils) - Parsing - 1pt
-Implementar função free_commands para liberar estruturas - Parsing - 2pt
-
-Criar função execute() que recebe t_command * - Execução - 1pt
-Criar loop principal do shell (readline → parse → execute) - Execução - 2pt
-Implementar controle básico de exit code global - Execução - 1pt
-
----
-
-# Fase 2 — Tokenizer (Parsing puro)
-
-Implementar detecção e separação de tokens por espaço - Parsing - 2pt
-Implementar suporte a aspas simples ' ' - Parsing - 3pt
-Implementar suporte a aspas duplas " " - Parsing - 3pt
-Implementar identificação de operadores | - Parsing - 2pt
-Implementar identificação de operadores > >> < << - Parsing - 3pt
-Criar struct t_token e lista encadeada de tokens - Parsing - 2pt
-Implementar função tokenize(input) - Parsing - 3pt
-
----
-
-# Fase 3 — Parser (transformar tokens em comandos)
-
-Implementar criação de t_command a partir de tokens - Parsing - 3pt
-Implementar parsing de argv (comando + argumentos) - Parsing - 2pt
-Implementar parsing de redirecionamento > - Parsing - 2pt
-Implementar parsing de redirecionamento >> - Parsing - 2pt
-Implementar parsing de redirecionamento < - Parsing - 2pt
-Implementar parsing de heredoc << (estrutura apenas) - Parsing - 3pt
-Implementar parsing de pipelines | - Parsing - 3pt
-Implementar encadeamento de múltiplos comandos - Parsing - 2pt
-
-Criar função parse() principal - Parsing - 2pt
-
----
-
-# Fase 4 — Expansão
-
-Implementar expansão de variáveis $VAR - Parsing - 3pt
-Implementar expansão de $? - Parsing - 2pt
-Implementar não expandir dentro de aspas simples - Parsing - 2pt
-Implementar expandir dentro de aspas duplas - Parsing - 2pt
-
----
-
-# Fase 5 — Validação sintática
-
-Detectar pipe no início ou fim - Parsing - 1pt
-Detectar redirecionamento sem destino - Parsing - 1pt
-Detectar operadores duplicados inválidos - Parsing - 1pt
-Retornar erro de sintaxe corretamente - Parsing - 2pt
-
----
-
-# Fase 6 — Execução básica
-
-Implementar execução de comando simples com execve - Execução - 3pt
-Implementar busca de comando usando PATH - Execução - 3pt
-Implementar fork e waitpid - Execução - 2pt
-Implementar tratamento de comando não encontrado - Execução - 1pt
-
----
-
-# Fase 7 — Redirecionamentos
-
-Implementar redirecionamento > - Execução - 3pt
-Implementar redirecionamento >> - Execução - 2pt
-Implementar redirecionamento < - Execução - 2pt
-Implementar heredoc << - Execução - 5pt
-
----
-
-# Fase 8 — Pipes
-
-Implementar criação de pipe entre dois comandos - Execução - 3pt
-Implementar múltiplos pipes - Execução - 5pt
-Implementar fechamento correto de file descriptors - Execução - 3pt
-Garantir wait correto de todos os processos - Execução - 2pt
-
----
-
-# Fase 9 — Builtins
-
-Implementar echo - Execução - 2pt
-Implementar pwd - Execução - 1pt
-Implementar env - Execução - 1pt
-Implementar cd - Execução - 3pt
-Implementar export - Execução - 5pt
-Implementar unset - Execução - 3pt
-Implementar exit - Execução - 2pt
-
-Implementar detecção de builtin no executor - Execução - 2pt
-
----
-
-# Fase 10 — Sinais
-
-Implementar tratamento de Ctrl+C no shell - Execução - 3pt
-Implementar comportamento correto em processos filhos - Execução - 3pt
-Implementar comportamento de Ctrl+D - Execução - 1pt
-Implementar comportamento de Ctrl+\ - Execução - 2pt
-
----
-
-# Fase 11 — Integração e estabilidade
-
-Integrar parsing e execução completamente - Parsing - 2pt
-Corrigir memory leaks principais - Parsing - 3pt
-Corrigir vazamentos de file descriptor - Execução - 2pt
-Testar cenários complexos (pipes + redirs + vars) - Execução - 3pt
-
----
-
-# Ordem recomendada de execução
-
-Você começa com:
-
-1 Definir structs
-2 tokenizer básico
-3 parser básico
-
-Vagner começa com:
-
-1 execute simples
-2 fork + execve
-3 PATH
-
-Depois ambos evoluem em paralelo.
-
----
-
-# Caminho crítico mínimo (MVP funcional)
-
-Essas tarefas já produzem um shell funcional:
-
-Parsing:
-
-* structs
-* tokenizer básico
-* parser argv
-* parser pipe
-
-Execução:
-
-* execve
-* fork
-* pipe
-
-Estimativa total MVP:
-
-Parsing: ~18pt
-Execução: ~18pt
-
-Total: ~36pt (~3 semanas com folga)
-
+- [Valgrind](https://valgrind.org/docs/manual/QuickStart.html) — used to check for memory leaks and invalid free operations during development.
