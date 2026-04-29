@@ -21,13 +21,16 @@ SRC = \
 	src/main.c \
 	src/lexer/lexer.c \
 	src/lexer/lexer_utils.c \
+	src/lexer/lexer_word.c \
 	src/lexer/token_add.c \
 	src/lexer/token_create.c \
 	src/parser/parser.c \
 	src/parser/parser_utils.c \
 	src/parser/builder.c \
 	src/executor/execute_command.c \
+	src/executor/resolve_path.c \
 	src/executor/pipeline.c \
+	src/executor/pipeline_child.c \
 	src/builtin_functions/builtins.c \
 	src/builtin_functions/builtins_utils.c \
 	src/builtin_functions/cd.c \
@@ -38,6 +41,7 @@ SRC = \
 	src/builtin_functions/export.c \
 	src/builtin_functions/pwd.c \
 	src/builtin_functions/unset.c \
+	src/env/env_copy.c \
 	src/env/env_get.c \
 	src/env/env_set.c \
 	src/env/env_unset.c \

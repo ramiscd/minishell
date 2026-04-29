@@ -6,13 +6,17 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 00:00:00 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/04/20 19:52:03 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/29 00:00:00 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/wait.h>
 #include <signal.h>
+
+void	close_all_pipes(int *pipe_fds, int n);
+int		do_fork(t_shell *sh, t_command *cmd, t_child_data *d, pid_t *pids);
+void	wait_children(pid_t *pids, t_child_data *d);
 
 static int	count_cmds(t_command *cmds)
 {
@@ -27,118 +31,70 @@ static int	count_cmds(t_command *cmds)
 	return (n);
 }
 
-static void	close_all_pipes(int *pipe_fds, int n)
+static int	open_pipes(t_shell *sh, t_child_data *d)
 {
 	int	i;
 
 	i = 0;
-	while (i < (n - 1) * 2)
+	while (i < d->n - 1)
 	{
-		close(pipe_fds[i]);
+		if (pipe(d->pipe_fds + i * 2) < 0)
+		{
+			perror("pipe");
+			free(d->pipe_fds);
+			sh->error = 1;
+			return (0);
+		}
 		i++;
 	}
+	return (1);
 }
 
-static void	run_child(t_shell *sh, t_command *cmd, int *pipe_fds, int i, int n)
+static int	fork_children(t_shell *sh, t_command *head, t_child_data *d)
 {
-	char	*path;
-	int		saved_stdin;
-	int		saved_stdout;
+	t_command	*cmd;
+	pid_t		*pids;
 
-	if (i > 0)
-		dup2(pipe_fds[(i - 1) * 2], STDIN_FILENO);
-	if (i < n - 1)
-		dup2(pipe_fds[i * 2 + 1], STDOUT_FILENO);
-	signal(SIGQUIT, SIG_DFL);
-	signal(SIGINT, SIG_DFL);
-	close_all_pipes(pipe_fds, n);
-	apply_redirs(cmd, &saved_stdin, &saved_stdout);
-	if (is_builtin(cmd))
+	pids = malloc(sizeof(pid_t) * d->n);
+	if (!pids)
+		return (sh->error = 1, 0);
+	cmd = head;
+	d->i = 0;
+	while (cmd)
 	{
-		run_builtin_child(sh, cmd);
-		exit((unsigned char)sh->error);
+		if (!do_fork(sh, cmd, d, pids))
+			return (0);
+		cmd = cmd->next;
+		d->i++;
 	}
-	path = resolve_path(sh, cmd->argv[0]);
-	if (!path)
-	{
-		ft_putstr_fd(cmd->argv[0], STDERR_FILENO);
-		ft_putendl_fd(": command not found", STDERR_FILENO);
-		exit(127);
-	}
-	execve(path, cmd->argv, sh->envp);
-	perror(path);
-	free(path);
-	exit(127);
+	close_all_pipes(d->pipe_fds, d->n);
+	wait_children(pids, d);
+	free(pids);
+	return (1);
 }
 
 void	execute_pipeline(t_shell *sh, t_command *head)
 {
-	int			n;
-	int			*pipe_fds;
-	pid_t		*pids;
-	t_command	*cmd;
-	int			i;
-	int			status;
+	t_child_data	d;
 
-	n = count_cmds(head);
-	if (n == 1)
+	d.n = count_cmds(head);
+	if (d.n == 1)
 	{
 		execute_command(sh, head);
 		return ;
 	}
-	pipe_fds = malloc(sizeof(int) * (n - 1) * 2);
-	pids = malloc(sizeof(pid_t) * n);
-	if (!pipe_fds || !pids)
-	{
-		free(pipe_fds);
-		free(pids);
-		sh->error = 1;
+	d.pipe_fds = malloc(sizeof(int) * (d.n - 1) * 2);
+	if (!d.pipe_fds)
+		return ((void)(sh->error = 1));
+	if (!open_pipes(sh, &d))
 		return ;
-	}
-	i = 0;
-	while (i < n - 1)
+	d.last_status = 0;
+	if (fork_children(sh, head, &d))
 	{
-		if (pipe(pipe_fds + i * 2) < 0)
-		{
-			perror("pipe");
-			free(pipe_fds);
-			free(pids);
+		if (WIFEXITED(d.last_status))
+			sh->error = (unsigned char)WEXITSTATUS(d.last_status);
+		else
 			sh->error = 1;
-			return ;
-		}
-		i++;
 	}
-	cmd = head;
-	i = 0;
-	while (cmd)
-	{
-		pids[i] = fork();
-		if (pids[i] < 0)
-		{
-			perror("fork");
-			close_all_pipes(pipe_fds, n);
-			free(pipe_fds);
-			free(pids);
-			sh->error = 1;
-			return ;
-		}
-		if (pids[i] == 0)
-			run_child(sh, cmd, pipe_fds, i, n);
-		cmd = cmd->next;
-		i++;
-	}
-	close_all_pipes(pipe_fds, n);
-	status = 0;
-	i = 0;
-	while (i < n)
-	{
-		waitpid(pids[i], &status, 0);
-		i++;
-	}
-	if (WIFEXITED(status))
-		sh->error = (char)WEXITSTATUS(status);
-	else
-		sh->error = 1;
-	free(pipe_fds);
-	free(pids);
+	free(d.pipe_fds);
 }

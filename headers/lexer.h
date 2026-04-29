@@ -22,5 +22,7 @@ t_token	*token_create(char *cmd, int type);
 void	add_token_back(t_token **head, t_token *new);
 char	*extract_word(char *input, int *i, t_shell *sh);
 void	free_tokens(t_token *head);
+int		buf_grow(t_buf *buf, const char *src, int slen);
+int		expand_dollar(char *input, int *i, t_shell *sh, t_buf *buf);
 
 #endif

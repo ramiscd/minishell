@@ -6,7 +6,7 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/07 19:46:31 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/04/20 20:35:52 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/29 00:00:00 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 
 t_redir	*create_redir(t_token *op, t_token *file)
 {
-	t_redir *r;
+	t_redir	*r;
 
 	r = malloc(sizeof(t_redir));
 	if (!r)
 		return (NULL);
-
 	r->file = strdup(file->cmd);
 	if (!r->file)
 	{
@@ -34,7 +33,6 @@ t_redir	*create_redir(t_token *op, t_token *file)
 		r->type = HEREDOC;
 	else if (op->type == TOKEN_APPEND)
 		r->type = APPEND;
-
 	r->next = NULL;
 	return (r);
 }
@@ -54,18 +52,44 @@ void	add_redir(t_command *cmd, t_redir *redir)
 	}
 }
 
-void free_redirs(t_redir *r)
+void	free_redirs(t_redir *r)
 {
-	t_redir *tmp;
+	t_redir	*tmp;
 
 	while (r)
 	{
 		tmp = r;
 		r = r->next;
-
 		if (tmp->file)
 			free(tmp->file);
-
 		free(tmp);
+	}
+}
+
+void	print_commands(t_command *cmd)
+{
+	t_redir	*r;
+	int		i;
+
+	while (cmd)
+	{
+		printf("Command:\n");
+		i = -1;
+		while (cmd->argv && cmd->argv[++i])
+			printf("  argv[%d]: %s\n", i, cmd->argv[i]);
+		r = cmd->redirs;
+		while (r)
+		{
+			if (r->type == REDIR_IN)
+				printf("  redir: < %s\n", r->file);
+			else if (r->type == REDIR_OUT)
+				printf("  redir: > %s\n", r->file);
+			else if (r->type == APPEND)
+				printf("  redir: >> %s\n", r->file);
+			else if (r->type == HEREDOC)
+				printf("  redir: << %s\n", r->file);
+			r = r->next;
+		}
+		cmd = cmd->next;
 	}
 }

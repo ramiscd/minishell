@@ -98,4 +98,20 @@ typedef struct s_cmd_builder
 	t_redir		*redirs;
 }	t_cmd_builder;
 
+typedef struct s_buf
+{
+	char	*data;
+	int		len;
+	int		size;
+	int		q;
+}	t_buf;
+
+typedef struct s_child_data
+{
+	int	*pipe_fds;
+	int	i;
+	int	n;
+	int	last_status;
+}	t_child_data;
+
 #endif

@@ -6,60 +6,46 @@
 /*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 11:20:00 by vade-mel          #+#    #+#             */
-/*   Updated: 2026/04/20 19:52:07 by rdamasce         ###   ########.fr       */
+/*   Updated: 2026/04/29 00:00:00 by rdamasce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/wait.h>
-#include <unistd.h>
 #include <signal.h>
 
-char	*resolve_path(t_shell *sh, char *cmd)
+static int	fork_failed(char *path, int sin, int sout, t_shell *sh)
 {
-	char	*path_env;
-	char	*path_copy;
-	char	*dir;
-	char	*next;
-	char	*full;
-
-	if (!cmd || !*cmd)
-		return (NULL);
-	if (ft_strchr(cmd, '/'))
-		return (ft_strdup(cmd));
-	path_env = env_get(sh, "PATH");
-	if (!path_env)
-		return (NULL);
-	path_copy = ft_strdup(path_env);
-	if (!path_copy)
-		return (NULL);
-	dir = path_copy;
-	while (dir)
-	{
-		next = ft_strchr(dir, ':');
-		if (next)
-			*next++ = '\0';
-		full = malloc(ft_strlen(dir) + ft_strlen(cmd) + 2);
-		if (full)
-		{
-			ft_strlcpy(full, dir, ft_strlen(dir) + 1);
-			ft_strlcat(full, "/", ft_strlen(dir) + 2);
-			ft_strlcat(full, cmd, ft_strlen(dir) + ft_strlen(cmd) + 2);
-			if (access(full, X_OK) == 0)
-			{
-				free(path_copy);
-				return (full);
-			}
-			free(full);
-		}
-		dir = next;
-	}
-	free(path_copy);
-	return (NULL);
+	perror("fork");
+	free(path);
+	restore_stdio(sin, sout);
+	sh->error = 1;
+	return (1);
 }
 
-static int	store_status(t_shell *sh, int status)
+static void	exec_child(char *path, t_command *cmd, t_shell *sh)
 {
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
+	execve(path, cmd->argv, sh->envp);
+	perror(path);
+	free(path);
+	exit(127);
+}
+
+static int	wait_and_restore(pid_t pid, int sin, int sout, t_shell *sh)
+{
+	int	status;
+
+	status = 0;
+	if (waitpid(pid, &status, 0) < 0)
+	{
+		perror("waitpid");
+		restore_stdio(sin, sout);
+		sh->error = 1;
+		return (1);
+	}
+	restore_stdio(sin, sout);
 	if (WIFEXITED(status))
 		sh->error = (char)WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -69,25 +55,7 @@ static int	store_status(t_shell *sh, int status)
 	return (sh->error != 0);
 }
 
-static int	wait_and_restore(pid_t pid, int saved_stdin, int saved_stdout,
-		t_shell *sh)
-{
-	int	status;
-
-	status = 0;
-	if (waitpid(pid, &status, 0) < 0)
-	{
-		perror("waitpid");
-		restore_stdio(saved_stdin, saved_stdout);
-		sh->error = 1;
-		return (1);
-	}
-	restore_stdio(saved_stdin, saved_stdout);
-	return (store_status(sh, status));
-}
-
-static int	execute_external(t_shell *sh, t_command *cmd, int saved_stdin,
-		int saved_stdout)
+static int	execute_external(t_shell *sh, t_command *cmd, int sin, int sout)
 {
 	char	*path;
 	pid_t	pid;
@@ -97,30 +65,17 @@ static int	execute_external(t_shell *sh, t_command *cmd, int saved_stdin,
 	{
 		ft_putstr_fd(cmd->argv[0], STDERR_FILENO);
 		ft_putendl_fd(": command not found", STDERR_FILENO);
-		restore_stdio(saved_stdin, saved_stdout);
+		restore_stdio(sin, sout);
 		sh->error = (char)127;
 		return (127);
 	}
 	pid = fork();
 	if (pid < 0)
-	{
-		perror("fork");
-		free(path);
-		restore_stdio(saved_stdin, saved_stdout);
-		sh->error = 1;
-		return (1);
-	}
+		return (fork_failed(path, sin, sout, sh));
 	if (pid == 0)
-	{
-		signal(SIGQUIT, SIG_DFL);
-		signal(SIGINT, SIG_DFL);
-		execve(path, cmd->argv, sh->envp);
-		perror(path);
-		free(path);
-		exit(127);
-	}
+		exec_child(path, cmd, sh);
 	free(path);
-	return (wait_and_restore(pid, saved_stdin, saved_stdout, sh));
+	return (wait_and_restore(pid, sin, sout, sh));
 }
 
 int	execute_command(t_shell *sh, t_command *cmd)

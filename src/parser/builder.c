@@ -27,21 +27,18 @@ t_cmd_builder	*init_builder(t_token *tokens)
 	return (b);
 }
 
-void add_arg(t_cmd_builder *b, char *arg)
+void	add_arg(t_cmd_builder *b, char *arg)
 {
-	char **new_argv;
+	char	**new_argv;
 
 	if (!b)
 		return ;
-
 	if (!b->argv)
 		new_argv = malloc(sizeof(char *) * 2);
 	else
 		new_argv = realloc(b->argv, sizeof(char *) * (b->argc + 2));
-
 	if (!new_argv)
 		return ;
-
 	b->argv = new_argv;
 	b->argv[b->argc] = arg;
 	b->argc++;
@@ -64,13 +61,11 @@ t_command	*build_command(t_cmd_builder *b)
 	return (cmd);
 }
 
-void free_builder(t_cmd_builder *b)
+void	free_builder(t_cmd_builder *b)
 {
 	if (!b)
 		return ;
-
 	if (b->argv)
 		free(b->argv);
-
 	free(b);
 }

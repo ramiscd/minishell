@@ -195,7 +195,13 @@ cat $TMP" \
 	"first
 second"
 
-skip_test "heredoc << EOF" "não implementado"
+run_multi "heredoc << EOF" \
+	"cat << EOF
+hello
+world
+EOF" \
+	"hello
+world"
 
 rm -f "$TMP"
 
