@@ -1,0 +1,61 @@
+Tests that don't work:
+Madatory:
+# Should skip the empty argument, and print hello after spaces
+echo - "" "  " hello
+###############################################################
+
+Heredoc:
+cat <<HEREDOC
+oi
+HEREDOC
+
+cat <<HERE <<DOC
+oi
+HERE
+time
+DOC
+
+cat <<HERE | ls
+oi
+HERE
+
+cat <<HERE
+$USER
+oi
+HERE
+
+cat <minishell.h <<HERE <missing | ls
+HERE
+
+cat <minishell.h <<HERE | cat
+HERE
+
+cat <minishell.h <<HERE <missing <<DOC | echo oi
+HERE
+DOC
+
+cat << $
+oi
+$
+
+<< echo oi
+echo
+###############################################################
+
+Not mandatory:
+# We need to imlement only "cd with only a relative or absolute path"
+cd
+cd ~
+
+# Empty export isn't set on `env` but is set on `export`
+export hello
+env | grep hello
+export | grep hello
+
+Local variables don't work
+
+# Open pipe waits for input
+ls |
+
+#undefined
+> '
