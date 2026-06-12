@@ -17,5 +17,6 @@ typedef struct s_mini		t_shell;
 typedef struct s_command	t_command;
 
 int	execute_command(t_shell *sh, t_command *cmd);
+int	execute_pipeline(t_shell *sh, t_command *cmd);
 
 #endif
