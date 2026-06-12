@@ -99,12 +99,15 @@ void	execute_pipeline(t_shell *sh, t_command *head)
 	d.n = 0;
 	if (!init_pipeline(sh, head, &d))
 	{
-		if (sh->error == 0)
+		if (d.n == 1)
 			execute_command(sh, head);
 		return ;
 	}
 	if (d.n == 1)
+	{
+		execute_command(sh, head);
 		return ;
+	}
 	d.last_status = 0;
 	if (fork_children(sh, head, &d))
 	{
