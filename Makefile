@@ -21,6 +21,7 @@ SRC = \
 	src/main.c \
 	src/lexer/lexer.c \
 	src/lexer/lexer_utils.c \
+	src/lexer/heredoc_expand.c \
 	src/lexer/lexer_word.c \
 	src/lexer/token_add.c \
 	src/lexer/token_create.c \
@@ -47,6 +48,7 @@ SRC = \
 	src/env/env_unset.c \
 	src/env/env_utils.c \
 	src/redirections/apply_redirs.c \
+	src/redirections/heredoc.c \
 	src/redirections/redir_utils.c \
 	src/redirections/restore_stdio.c
 

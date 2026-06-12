@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "parser.h"
+#include "libft.h"
 
 t_command	*build_command(t_cmd_builder *b);
 
@@ -73,7 +74,7 @@ static int	parse_step(t_cmd_builder *b, t_command **head, t_command **last)
 
 	if (b->current->type == WORD)
 	{
-		add_arg(b, strdup(b->current->cmd));
+		add_arg(b, ft_strdup(b->current->cmd));
 		b->current = b->current->next;
 		return (1);
 	}

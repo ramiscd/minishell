@@ -12,6 +12,18 @@
 
 #include "parser.h"
 
+static void	copy_argv(char **new_argv, char **old_argv, int argc)
+{
+	int	i;
+
+	i = 0;
+	while (i < argc)
+	{
+		new_argv[i] = old_argv[i];
+		i++;
+	}
+}
+
 t_cmd_builder	*init_builder(t_token *tokens)
 {
 	t_cmd_builder	*b;
@@ -36,7 +48,14 @@ void	add_arg(t_cmd_builder *b, char *arg)
 	if (!b->argv)
 		new_argv = malloc(sizeof(char *) * 2);
 	else
-		new_argv = realloc(b->argv, sizeof(char *) * (b->argc + 2));
+	{
+		new_argv = malloc(sizeof(char *) * (b->argc + 2));
+		if (new_argv)
+		{
+			copy_argv(new_argv, b->argv, b->argc);
+			free(b->argv);
+		}
+	}
 	if (!new_argv)
 		return ;
 	b->argv = new_argv;

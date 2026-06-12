@@ -13,6 +13,7 @@
 NAME = libft.a
 
 CFLAGS	= -Wall -Wextra -Werror
+CC		= cc
 LIB1	= ar -rcs
 LIB2	= ranlib
 RM		= /bin/rm -f
@@ -35,7 +36,7 @@ $(NAME):	$(OBJS) $(INCLUDE)
 			$(LIB1) $(NAME) $(OBJS)
 
 .c.o:
-			gcc $(CFLAGS) -c $< -o $(<:.c=.o)
+			$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
 
 clean:
 			$(RM) $(OBJS)

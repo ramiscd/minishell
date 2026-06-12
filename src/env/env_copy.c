@@ -27,7 +27,7 @@ char	**copy_envp(char **envp)
 	i = 0;
 	while (i < count)
 	{
-		copy[i] = strdup(envp[i]);
+		copy[i] = ft_strdup(envp[i]);
 		if (!copy[i])
 		{
 			while (i-- > 0)

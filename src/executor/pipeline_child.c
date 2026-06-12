@@ -55,7 +55,8 @@ static void	run_child(t_shell *sh, t_command *cmd, t_child_data *d)
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
 	close_all_pipes(d->pipe_fds, d->n);
-	apply_redirs(cmd, &saved_stdin, &saved_stdout);
+	if (apply_redirs(cmd, &saved_stdin, &saved_stdout))
+		exit(1);
 	if (is_builtin(cmd))
 	{
 		run_builtin_child(sh, cmd);

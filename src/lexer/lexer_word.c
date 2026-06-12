@@ -12,17 +12,38 @@
 
 #include "lexer.h"
 
+static int	close_quote(t_buf *buf, char c, int *i)
+{
+	if (buf->q == 1 && c == '\'')
+		buf->q = 0;
+	else if (buf->q == 2 && c == '"')
+		buf->q = 0;
+	else
+		return (0);
+	(*i)++;
+	return (1);
+}
+
+static int	open_quote(t_buf *buf, char c, int *i)
+{
+	if (buf->q != 0)
+		return (0);
+	if (c == '\'')
+		buf->q = 1;
+	else if (c == '"')
+		buf->q = 2;
+	else
+		return (0);
+	buf->quoted = 1;
+	(*i)++;
+	return (1);
+}
+
 static int	handle_quotes(t_buf *buf, char *input, int *i)
 {
-	if (buf->q == 1 && input[*i] == '\'')
-		return (buf->q = 0, (*i)++, 1);
-	if (buf->q == 2 && input[*i] == '"')
-		return (buf->q = 0, (*i)++, 1);
-	if (buf->q == 0 && input[*i] == '\'')
-		return (buf->q = 1, (*i)++, 1);
-	if (buf->q == 0 && input[*i] == '"')
-		return (buf->q = 2, (*i)++, 1);
-	return (0);
+	if (close_quote(buf, input[*i], i))
+		return (1);
+	return (open_quote(buf, input[*i], i));
 }
 
 static int	process_char(t_buf *buf, char *input, int *i, t_shell *sh)
@@ -44,7 +65,7 @@ static int	process_char(t_buf *buf, char *input, int *i, t_shell *sh)
 	return (0);
 }
 
-char	*extract_word(char *input, int *i, t_shell *sh)
+char	*extract_word(char *input, int *i, t_shell *sh, int *quoted)
 {
 	t_buf	buf;
 	int		ret;
@@ -52,6 +73,7 @@ char	*extract_word(char *input, int *i, t_shell *sh)
 	buf.size = 64;
 	buf.len = 0;
 	buf.q = 0;
+	buf.quoted = 0;
 	buf.data = malloc(buf.size);
 	if (!buf.data)
 		return (NULL);
@@ -64,7 +86,9 @@ char	*extract_word(char *input, int *i, t_shell *sh)
 		if (ret == -1)
 			return (free(buf.data), NULL);
 	}
-	if (buf.len == 0)
+	if (quoted)
+		*quoted = buf.quoted;
+	if (buf.len == 0 && !buf.quoted)
 		return (free(buf.data), NULL);
 	return (buf.data);
 }

@@ -17,20 +17,20 @@ static t_token	*handle_angle(char *input, int *i)
 	if (input[*i] == '>' && input[*i + 1] == '>')
 	{
 		(*i) += 2;
-		return (token_create(">>", TOKEN_APPEND));
+		return (token_create(">>", TOKEN_APPEND, 0));
 	}
 	if (input[*i] == '>')
 	{
 		(*i)++;
-		return (token_create(">", TOKEN_REDIR_OUT));
+		return (token_create(">", TOKEN_REDIR_OUT, 0));
 	}
 	if (input[*i] == '<' && input[*i + 1] == '<')
 	{
 		(*i) += 2;
-		return (token_create("<<", TOKEN_HEREDOC));
+		return (token_create("<<", TOKEN_HEREDOC, 0));
 	}
 	(*i)++;
-	return (token_create("<", TOKEN_REDIR_IN));
+	return (token_create("<", TOKEN_REDIR_IN, 0));
 }
 
 static t_token	*handle_special(char *input, int *i)
@@ -38,7 +38,7 @@ static t_token	*handle_special(char *input, int *i)
 	if (input[*i] == '|')
 	{
 		(*i)++;
-		return (token_create("|", PIPE));
+		return (token_create("|", PIPE, 0));
 	}
 	return (handle_angle(input, i));
 }
@@ -47,14 +47,16 @@ static t_token	*next_token(char *input, int *i, t_shell *sh)
 {
 	t_token	*tok;
 	char	*cmd;
+	int		quoted;
 
 	if (input[*i] == '\'' || input[*i] == '"'
 		|| (input[*i] != '|' && input[*i] != '<' && input[*i] != '>'))
 	{
-		cmd = extract_word(input, i, sh);
+		quoted = 0;
+		cmd = extract_word(input, i, sh, &quoted);
 		if (!cmd)
 			return (NULL);
-		tok = token_create(cmd, WORD);
+		tok = token_create(cmd, WORD, quoted);
 		free(cmd);
 		return (tok);
 	}

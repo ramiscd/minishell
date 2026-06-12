@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "parser.h"
+#include "libft.h"
+#include <unistd.h>
 
 t_redir	*create_redir(t_token *op, t_token *file)
 {
@@ -19,7 +21,7 @@ t_redir	*create_redir(t_token *op, t_token *file)
 	r = malloc(sizeof(t_redir));
 	if (!r)
 		return (NULL);
-	r->file = strdup(file->cmd);
+	r->file = ft_strdup(file->cmd);
 	if (!r->file)
 	{
 		free(r);
@@ -33,6 +35,8 @@ t_redir	*create_redir(t_token *op, t_token *file)
 		r->type = HEREDOC;
 	else if (op->type == TOKEN_APPEND)
 		r->type = APPEND;
+	r->quoted = file->quoted;
+	r->heredoc_fd = -1;
 	r->next = NULL;
 	return (r);
 }
@@ -60,6 +64,8 @@ void	free_redirs(t_redir *r)
 	{
 		tmp = r;
 		r = r->next;
+		if (tmp->heredoc_fd >= 0)
+			close(tmp->heredoc_fd);
 		if (tmp->file)
 			free(tmp->file);
 		free(tmp);

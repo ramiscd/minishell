@@ -12,28 +12,25 @@
 
 #include "lexer.h"
 #include "env.h"
-#include <stdio.h>
-#include <ctype.h>
+#include "libft.h"
 
 static char	*expand_var(t_shell *sh, const char *name, int len)
 {
-	char	buf[16];
 	char	key[256];
 	char	*val;
+	char	*status;
 
 	if (len == 1 && name[0] == '?')
-	{
-		snprintf(buf, sizeof(buf), "%d", (int)(unsigned char)sh->error);
-		return (strdup(buf));
-	}
+		return (ft_itoa((int)(unsigned char)sh->error));
 	if (len <= 0 || len >= (int) sizeof(key))
-		return (strdup("$"));
-	memcpy(key, name, len);
+		return (ft_strdup("$"));
+	ft_memcpy(key, name, len);
 	key[len] = '\0';
 	val = env_get(sh, key);
 	if (val)
-		return (strdup(val));
-	return (strdup(""));
+		return (ft_strdup(val));
+	status = ft_strdup("");
+	return (status);
 }
 
 int	buf_grow(t_buf *buf, const char *src, int slen)
@@ -45,12 +42,12 @@ int	buf_grow(t_buf *buf, const char *src, int slen)
 		tmp = malloc(buf->size * 2);
 		if (!tmp)
 			return (1);
-		memcpy(tmp, buf->data, buf->len);
+		ft_memcpy(tmp, buf->data, buf->len);
 		free(buf->data);
 		buf->data = tmp;
 		buf->size *= 2;
 	}
-	memcpy(buf->data + buf->len, src, slen);
+	ft_memcpy(buf->data + buf->len, src, slen);
 	buf->len += slen;
 	buf->data[buf->len] = '\0';
 	return (0);
@@ -68,7 +65,7 @@ static int	read_varname(char *input, int *i, char *name)
 	}
 	else
 	{
-		while (input[*i] && (isalnum((unsigned char)input[*i])
+		while (input[*i] && (ft_isalnum((unsigned char)input[*i])
 				|| input[*i] == '_'))
 			name[nlen++] = input[(*i)++];
 	}
@@ -90,7 +87,7 @@ int	expand_dollar(char *input, int *i, t_shell *sh, t_buf *buf)
 	expanded = expand_var(sh, name, nlen);
 	if (!expanded)
 		return (1);
-	ret = buf_grow(buf, expanded, strlen(expanded));
+	ret = buf_grow(buf, expanded, ft_strlen(expanded));
 	free(expanded);
 	return (ret);
 }

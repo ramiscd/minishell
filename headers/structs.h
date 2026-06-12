@@ -40,6 +40,7 @@ typedef struct s_token
 {
 	char			*cmd;
 	int				type;
+	int				quoted;
 	struct s_token	*next;
 	struct s_token	*prev;
 }	t_token;
@@ -48,6 +49,8 @@ typedef struct s_redir
 {
 	t_redir_type		type;
 	char				*file;
+	int					quoted;
+	int					heredoc_fd;
 	struct s_redir		*next;
 }	t_redir;
 
@@ -104,6 +107,7 @@ typedef struct s_buf
 	int		len;
 	int		size;
 	int		q;
+	int		quoted;
 }	t_buf;
 
 typedef struct s_child_data

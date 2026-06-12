@@ -73,20 +73,37 @@ static int	fork_children(t_shell *sh, t_command *head, t_child_data *d)
 	return (1);
 }
 
+static int	init_pipeline(t_shell *sh, t_command *head, t_child_data *d)
+{
+	if (prepare_heredocs(head, sh))
+	{
+		sh->error = 1;
+		return (0);
+	}
+	d->n = count_cmds(head);
+	if (d->n == 1)
+		return (0);
+	d->pipe_fds = malloc(sizeof(int) * (d->n - 1) * 2);
+	if (!d->pipe_fds)
+	{
+		sh->error = 1;
+		return (0);
+	}
+	return (open_pipes(sh, d));
+}
+
 void	execute_pipeline(t_shell *sh, t_command *head)
 {
 	t_child_data	d;
 
-	d.n = count_cmds(head);
-	if (d.n == 1)
+	d.n = 0;
+	if (!init_pipeline(sh, head, &d))
 	{
-		execute_command(sh, head);
+		if (sh->error == 0)
+			execute_command(sh, head);
 		return ;
 	}
-	d.pipe_fds = malloc(sizeof(int) * (d.n - 1) * 2);
-	if (!d.pipe_fds)
-		return ((void)(sh->error = 1));
-	if (!open_pipes(sh, &d))
+	if (d.n == 1)
 		return ;
 	d.last_status = 0;
 	if (fork_children(sh, head, &d))

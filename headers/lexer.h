@@ -18,11 +18,12 @@
 typedef struct s_mini	t_shell;
 
 t_token	*lexer(char *input, t_shell *sh);
-t_token	*token_create(char *cmd, int type);
+t_token	*token_create(char *cmd, int type, int quoted);
 void	add_token_back(t_token **head, t_token *new);
-char	*extract_word(char *input, int *i, t_shell *sh);
+char	*extract_word(char *input, int *i, t_shell *sh, int *quoted);
 void	free_tokens(t_token *head);
 int		buf_grow(t_buf *buf, const char *src, int slen);
 int		expand_dollar(char *input, int *i, t_shell *sh, t_buf *buf);
+char	*expand_heredoc_line(char *line, t_shell *sh);
 
 #endif
