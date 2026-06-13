@@ -49,6 +49,7 @@ SRC = \
 	src/env/env_utils.c \
 	src/redirections/apply_redirs.c \
 	src/redirections/heredoc.c \
+	src/redirections/heredoc_signal.c \
 	src/redirections/redir_utils.c \
 	src/redirections/restore_stdio.c
 

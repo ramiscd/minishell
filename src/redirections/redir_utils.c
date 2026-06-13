@@ -44,7 +44,7 @@ int	redir_apply_node(t_redir *redir)
 	if (fd < 0)
 	{
 		if (redir->type != HEREDOC)
-			perror("open");
+			perror(redir->file);
 		return (1);
 	}
 	target = redir_target_fd(redir->type);

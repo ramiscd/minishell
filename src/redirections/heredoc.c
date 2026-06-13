@@ -13,28 +13,6 @@
 #include "minishell.h"
 #include "lexer.h"
 
-static char	*hd_readline(void)
-{
-	char	buf[4097];
-	int		len;
-	char	c;
-	int		n;
-
-	len = 0;
-	n = 0;
-	while (len < 4096)
-	{
-		n = read(STDIN_FILENO, &c, 1);
-		if (n <= 0 || c == '\n')
-			break ;
-		buf[len++] = c;
-	}
-	if (len == 0 && n <= 0)
-		return (NULL);
-	buf[len] = '\0';
-	return (ft_strdup(buf));
-}
-
 static char	*expand_line(char *line, t_redir *redir, t_shell *sh)
 {
 	if (redir->quoted)
@@ -42,12 +20,21 @@ static char	*expand_line(char *line, t_redir *redir, t_shell *sh)
 	return (expand_heredoc_line(line, sh));
 }
 
+static int	next_line(char **line, t_shell *sh)
+{
+	*line = heredoc_readline();
+	if (heredoc_interrupted(sh))
+		return (1);
+	return (0);
+}
+
 static int	fill_heredoc(int *pfd, t_redir *redir, t_shell *sh)
 {
 	char	*line;
 	char	*expanded;
 
-	line = hd_readline();
+	if (next_line(&line, sh))
+		return (1);
 	while (line)
 	{
 		if (ft_strncmp(line, redir->file, ft_strlen(redir->file) + 1) == 0)
@@ -64,7 +51,8 @@ static int	fill_heredoc(int *pfd, t_redir *redir, t_shell *sh)
 			return (1);
 		}
 		free(expanded);
-		line = hd_readline();
+		if (next_line(&line, sh))
+			return (1);
 	}
 	return (0);
 }

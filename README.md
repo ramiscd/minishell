@@ -87,3 +87,7 @@ The following references were used during development, organized by area:
 ### Memory and debugging
 
 - [Valgrind](https://valgrind.org/docs/manual/QuickStart.html) — used to check for memory leaks and invalid free operations during development.
+
+AI usage disclosure:
+
+AI was used as a review copilot for focused debugging and README drafting.

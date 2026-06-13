@@ -77,7 +77,8 @@ static int	init_pipeline(t_shell *sh, t_command *head, t_child_data *d)
 {
 	if (prepare_heredocs(head, sh))
 	{
-		sh->error = 1;
+		if ((unsigned char)sh->error != 130)
+			sh->error = 1;
 		return (0);
 	}
 	d->n = count_cmds(head);
