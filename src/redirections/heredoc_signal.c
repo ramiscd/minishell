@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_signal.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdamasce <rdamasce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vade-mel <vade-mel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/13 00:00:00 by rdamasce          #+#    #+#             */
-/*   Updated: 2026/06/13 00:00:00 by rdamasce         ###   ########.fr       */
+/*   Created: 2026/06/13 09:53:06 by vade-mel          #+#    #+#             */
+/*   Updated: 2026/06/13 11:38:20 by vade-mel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,25 @@ static void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	*hd_sigint_flag() = 1;
-	write(STDERR_FILENO, "\n", 1);
-	rl_done = 1;
+	write(STDOUT_FILENO, "\n", 1);
+	close(STDIN_FILENO);
 }
 
 char	*heredoc_readline(void)
 {
 	char	*line;
+	int		saved_stdin;
 
 	*hd_sigint_flag() = 0;
+	saved_stdin = dup(STDIN_FILENO);
 	signal(SIGINT, heredoc_sigint_handler);
 	line = readline("> ");
 	signal(SIGINT, shell_sigint_handler);
+	if (saved_stdin >= 0)
+	{
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdin);
+	}
 	if (*hd_sigint_flag())
 	{
 		free(line);
